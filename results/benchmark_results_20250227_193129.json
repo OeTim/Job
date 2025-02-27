@@ -1,0 +1,11 @@
+{
+    "timestamp": "2025-02-27 19:31:29",
+    "baseline_strategies": {
+        "FIFO": 66,
+        "LIFO": 74,
+        "SPT": 33
+    },
+    "models": {
+        "best_model_20250227_170825_makespan_1591": {
+            "avg_makespan": 1467.0,
+            "min_makespan": 

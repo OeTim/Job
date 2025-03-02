@@ -665,7 +665,6 @@ def train_rl_agent(data, config=None, rl_config=None, show_plots=False):
         all_makespans.append(makespan)
         
         # Bestes Modell speichern
-        # In der train_rl_agent Funktion, beim Speichern des Modells:
         if makespan < best_makespan and makespan > 0:
             best_makespan = makespan
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -695,28 +694,6 @@ def train_rl_agent(data, config=None, rl_config=None, show_plots=False):
         else:
             no_improvement_count += 1
         
-        # Exploration erhöhen, wenn keine Verbesserung
-        if no_improvement_count > 50:
-            agent.entropy_coef = min(0.5, agent.entropy_coef * 1.5)  # Begrenze auf 0.5
-            print(f"\nKeine Verbesserung seit 50 Episoden. Erhöhe Exploration auf {agent.entropy_coef:.4f}")
-            
-            # Zusätzlich: Lernrate anpassen
-            agent.lr *= 0.8
-            for param_group in agent.optimizer.param_groups:
-                param_group['lr'] = agent.lr
-            print(f"Lernrate reduziert auf {agent.lr:.6f}")
-            
-            # Umgebung zurücksetzen mit leicht veränderten Daten
-            if episode > 200:
-                perturbed_data = copy.deepcopy(data)
-                for job in perturbed_data["jobs"]:
-                    random.shuffle(job["Operationen"])  # Operationsreihenfolge ändern
-                env = JobSchedulingEnv(perturbed_data, config)
-                agent.env = env
-                print("Umgebung mit veränderter Operationsreihenfolge zurückgesetzt")
-            
-            no_improvement_count = 0
-        
         # Regelmäßige Evaluation
         if episode % eval_interval == 0:
             avg_reward = np.mean(episode_rewards[-eval_interval:])
@@ -725,28 +702,8 @@ def train_rl_agent(data, config=None, rl_config=None, show_plots=False):
             
             # Vergleich mit Baseline-Strategien nur anzeigen, wenn gewünscht
             if show_plots:
-                compare_strategies(data)
-        
-        # Modell regelmäßig speichern
-        if episode % save_interval == 0:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            model_path = os.path.join(models_dir, f"model_episode_{episode}_{timestamp}.pt")
-            agent.save_models(model_path)
-            print(f"\nModell gespeichert in: {model_path}")
-    
-    # Trainingsergebnisse
-    results = {
-        'rewards': all_rewards,
-        'makespans': all_makespans,
-        'best_makespan': best_makespan,
-        'best_model_path': best_model_path
-    }
-    
-    # Ergebnisse visualisieren, nur wenn gewünscht
-    if show_plots:
-        plot_training_results(results)
-    
-    return agent, results
+                # Fix: Pass both data and config to compare_strategies
+                compare_strategies(data, config)
 
 def evaluate_agent(data, agent, n_episodes=10):
     """

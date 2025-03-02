@@ -16,13 +16,78 @@ from environments.job_env import JobSchedulingEnv
 from agents.ppo_agent import PPOAgent
 
 # Konfiguration für die Produktionsdaten
+# config = {
+#     "n_jobs": 50,           # Anzahl der Jobs
+#     "min_ops": 2,           # Minimale Operationen pro Job
+#     "max_ops": 5,           # Maximale Operationen pro Job
+#     "machines": ["M1", "M2", "M3", "M4"],
+#     "materials": ["Material_A", "Material_B", "Material_C"],
+#     "tools": ["Werkzeug", "Öl", "Kühlmittel", "Schablone"]
+# }
+
+
 config = {
-    "n_jobs": 50,           # Anzahl der Jobs
-    "min_ops": 2,           # Minimale Operationen pro Job
-    "max_ops": 5,           # Maximale Operationen pro Job
+    "n_jobs": 50,           
+    "min_ops": 2,           
+    "max_ops": 5,           
     "machines": ["M1", "M2", "M3", "M4"],
     "materials": ["Material_A", "Material_B", "Material_C"],
-    "tools": ["Werkzeug", "Öl", "Kühlmittel", "Schablone"]
+    "tools": ["Werkzeug", "Öl", "Kühlmittel", "Schablone"],
+    # Neuer Eintrag: Startmaterial für jede Maschine
+    "machine_initial": {
+        "M1": "Material_A",
+        "M2": "Material_A",
+        "M3": "Material_A",
+        "M4": "Material_A"
+    },
+    # Neuer Eintrag: Umrüstungstabelle pro Maschine
+    "changeover_times": {
+        "M1": {
+            ("Material_A", "Material_A"): 0,
+            ("Material_A", "Material_B"): 5,
+            ("Material_A", "Material_C"): 7,
+            ("Material_B", "Material_A"): 6,
+            ("Material_B", "Material_B"): 0,
+            ("Material_B", "Material_C"): 8,
+            ("Material_C", "Material_A"): 9,
+            ("Material_C", "Material_B"): 4,
+            ("Material_C", "Material_C"): 0
+        },
+        # Für M2, M3, M4 nehmen wir hier gleiche Werte an – du kannst sie individuell anpassen:
+        "M2": {
+            ("Material_A", "Material_A"): 0,
+            ("Material_A", "Material_B"): 5,
+            ("Material_A", "Material_C"): 7,
+            ("Material_B", "Material_A"): 6,
+            ("Material_B", "Material_B"): 0,
+            ("Material_B", "Material_C"): 8,
+            ("Material_C", "Material_A"): 9,
+            ("Material_C", "Material_B"): 4,
+            ("Material_C", "Material_C"): 0
+        },
+        "M3": {
+            ("Material_A", "Material_A"): 0,
+            ("Material_A", "Material_B"): 5,
+            ("Material_A", "Material_C"): 7,
+            ("Material_B", "Material_A"): 6,
+            ("Material_B", "Material_B"): 0,
+            ("Material_B", "Material_C"): 8,
+            ("Material_C", "Material_A"): 9,
+            ("Material_C", "Material_B"): 4,
+            ("Material_C", "Material_C"): 0
+        },
+        "M4": {
+            ("Material_A", "Material_A"): 0,
+            ("Material_A", "Material_B"): 5,
+            ("Material_A", "Material_C"): 7,
+            ("Material_B", "Material_A"): 6,
+            ("Material_B", "Material_B"): 0,
+            ("Material_B", "Material_C"): 8,
+            ("Material_C", "Material_A"): 9,
+            ("Material_C", "Material_B"): 4,
+            ("Material_C", "Material_C"): 0
+        }
+    }
 }
 
 # Konfiguration für das RL-Training
@@ -48,6 +113,72 @@ rl_config = {
     "update_interval": 20,      # Intervall für Netzwerk-Updates
     "eval_interval": 50,        # Intervall für Evaluierungen
     "save_interval": 100,       # Intervall zum Speichern des Modells
+}
+
+
+# Konfiguration für das RL-Training
+config = {
+    "n_jobs": 50,           
+    "min_ops": 2,           
+    "max_ops": 5,           
+    "machines": ["M1", "M2", "M3", "M4"],
+    "materials": ["Material_A", "Material_B", "Material_C"],
+    "tools": ["Werkzeug", "Öl", "Kühlmittel", "Schablone"],
+    # Neuer Eintrag: Startmaterial für jede Maschine
+    "machine_initial": {
+        "M1": "Material_A",
+        "M2": "Material_A",
+        "M3": "Material_A",
+        "M4": "Material_A"
+    },
+    # Neuer Eintrag: Umrüstungstabelle pro Maschine
+    "changeover_times": {
+        "M1": {
+            ("Material_A", "Material_A"): 0,
+            ("Material_A", "Material_B"): 5,
+            ("Material_A", "Material_C"): 7,
+            ("Material_B", "Material_A"): 6,
+            ("Material_B", "Material_B"): 0,
+            ("Material_B", "Material_C"): 8,
+            ("Material_C", "Material_A"): 9,
+            ("Material_C", "Material_B"): 4,
+            ("Material_C", "Material_C"): 0
+        },
+        # Für M2, M3, M4 nehmen wir hier gleiche Werte an – du kannst sie individuell anpassen:
+        "M2": {
+            ("Material_A", "Material_A"): 0,
+            ("Material_A", "Material_B"): 5,
+            ("Material_A", "Material_C"): 7,
+            ("Material_B", "Material_A"): 6,
+            ("Material_B", "Material_B"): 0,
+            ("Material_B", "Material_C"): 8,
+            ("Material_C", "Material_A"): 9,
+            ("Material_C", "Material_B"): 4,
+            ("Material_C", "Material_C"): 0
+        },
+        "M3": {
+            ("Material_A", "Material_A"): 0,
+            ("Material_A", "Material_B"): 5,
+            ("Material_A", "Material_C"): 7,
+            ("Material_B", "Material_A"): 6,
+            ("Material_B", "Material_B"): 0,
+            ("Material_B", "Material_C"): 8,
+            ("Material_C", "Material_A"): 9,
+            ("Material_C", "Material_B"): 4,
+            ("Material_C", "Material_C"): 0
+        },
+        "M4": {
+            ("Material_A", "Material_A"): 0,
+            ("Material_A", "Material_B"): 5,
+            ("Material_A", "Material_C"): 7,
+            ("Material_B", "Material_A"): 6,
+            ("Material_B", "Material_B"): 0,
+            ("Material_B", "Material_C"): 8,
+            ("Material_C", "Material_A"): 9,
+            ("Material_C", "Material_B"): 4,
+            ("Material_C", "Material_C"): 0
+        }
+    }
 }
 
 # Globale Variablen für den Datenzustand
@@ -77,7 +208,7 @@ def generate_synthetic_data(config):
             if random.random() < 0.4:  # 40% Wahrscheinlichkeit für Hilfsmittel
                 n_tools = random.randint(1, 2)
                 operation["benötigteHilfsmittel"] = random.sample(config["tools"], n_tools)
-                operation["umruestzeit"] = random.randint(1, 10)
+                # operation["umruestzeit"] = random.randint(1, 10)
                 operation["umruestkosten"] = random.randint(10, 50)
 
             if random.random() < 0.3:  # 30% Wahrscheinlichkeit für Zwischenlager
@@ -211,6 +342,7 @@ def simulate_production(data, strategy=None, random_seed=42):
     """
     random.seed(random_seed)
     env = simpy.Environment()
+    machine_states = config.get("machine_initial", {machine: None for machine in config["machines"]})
     
     # Ressourcen erstellen
     machines = {machine: simpy.Resource(env, capacity=1) for machine in config["machines"]}
@@ -251,10 +383,25 @@ def simulate_production(data, strategy=None, random_seed=42):
                     for req in tool_reqs:
                         yield req
                 
-                # Umrüstzeit, falls vorhanden
-                if "umruestzeit" in op:
-                    yield env.timeout(op["umruestzeit"])
+                # # Umrüstzeit, falls vorhanden
+                # if "umruestzeit" in op:
+                #     yield env.timeout(op["umruestzeit"])
                 
+                required_material = op["produziertesMaterial"]
+                current_material = machine_states[machine_name]
+                if current_material != required_material:
+                    # Hole die Umrüstzeit aus der Tabelle
+                    changeover_table = config["changeover_times"].get(machine_name, {})
+                    # Falls current_material None ist, kann man optional keinen Wechsel oder einen definierten Initialwert nehmen
+                    changeover_time = changeover_table.get((current_material, required_material), 0)
+                    if changeover_time > 0:
+                        print(f"Maschine {machine_name} wechselt von {current_material} zu {required_material}. Umrüstzeit: {changeover_time}")
+                        yield env.timeout(changeover_time)
+                        # OPTIONAL: Hier könnte man einen Strafwert (Penalty) für die Umrüstung einbauen, z.B.:
+                        # stats["umruest_penalties"].append(changeover_time)
+                    # Aktualisiere den Maschinenzustand
+                    machine_states[machine_name] = required_material
+
                 # Operation ausführen
                 operation_start = env.now
                 yield env.timeout(op["benötigteZeit"])
@@ -296,6 +443,9 @@ def simulate_production(data, strategy=None, random_seed=42):
     elif strategy == 'SPT':
         # SPT: Sortieren nach Gesamtbearbeitungszeit
         jobs.sort(key=lambda job: sum(op["benötigteZeit"] for op in job["Operationen"]))
+    elif strategy == 'RANDOM':
+        # RANDOM: Zufällige Reihenfolge
+        random.shuffle(jobs)
     
     # Alle Jobs starten
     for job in jobs:
@@ -656,49 +806,112 @@ def evaluate_agent(data, agent, n_episodes=10):
     
     return results
 
-def compare_strategies(data, agent=None, strategies=None, show_plots=True):
+def compare_strategies(data, config=None, include_rl=False, rl_agent=None, n_runs=5):
     """
-    Vergleicht verschiedene Scheduling-Strategien mit dem trainierten Agenten
+    Vergleicht verschiedene Scheduling-Strategien
     
     Args:
         data: Produktionsdaten
-        agent: Der trainierte Agent (optional)
-        strategies: Liste von Strategien zum Vergleich
-        show_plots: Ob Plots angezeigt werden sollen
-    
-    Returns:
-        dict: Vergleichsergebnisse
+        config: Konfiguration
+        include_rl: Ob der RL-Agent einbezogen werden soll
+        rl_agent: Der trainierte RL-Agent
+        n_runs: Anzahl der Durchläufe für die Zufallsstrategie
     """
-    if strategies is None:
-        strategies = ['FIFO', 'LIFO', 'SPT']
-    
+    strategies = ['FIFO', 'LIFO', 'SPT', 'RANDOM']
     results = {}
     
-    # Baseline-Strategien evaluieren
+    env = JobSchedulingEnv(data, config)
+    
+    # Strategien testen
     for strategy in strategies:
-        stats = simulate_production(data, strategy=strategy)
-        results[strategy] = stats.get('makespan', 0)
+        if strategy == 'RANDOM':
+            # Mehrere Durchläufe für die Zufallsstrategie
+            makespans = []
+            for _ in range(n_runs):
+                env.reset()
+                done = False
+                while not done:
+                    _, _, done, info = env.step('RANDOM')
+                makespans.append(info['makespan'])
+            
+            # Durchschnitt, Minimum und Maximum berechnen
+            results[strategy] = {
+                'avg_makespan': np.mean(makespans),
+                'min_makespan': np.min(makespans),
+                'max_makespan': np.max(makespans),
+                'std_makespan': np.std(makespans)
+            }
+            print(f"\n{strategy} (über {n_runs} Durchläufe):")
+            print(f"  Durchschnittlicher Makespan: {results[strategy]['avg_makespan']:.2f}")
+            print(f"  Minimaler Makespan: {results[strategy]['min_makespan']:.2f}")
+            print(f"  Maximaler Makespan: {results[strategy]['max_makespan']:.2f}")
+            print(f"  Standardabweichung: {results[strategy]['std_makespan']:.2f}")
+        else:
+            # Einzelner Durchlauf für deterministische Strategien
+            env.reset()
+            done = False
+            while not done:
+                _, _, done, info = env.step(strategy)
+            
+            results[strategy] = {'makespan': info['makespan']}
+            print(f"\n{strategy}:")
+            print(f"  Makespan: {info['makespan']:.2f}")
     
-    # Agenten evaluieren, falls vorhanden
-    if agent:
-        agent_results = evaluate_agent(data, agent, n_episodes=5)
-        results['PPO'] = agent_results['avg_makespan']
+    # RL-Agent testen, falls gewünscht
+    if include_rl and rl_agent is not None:
+        makespans = []
+        for _ in range(n_runs):
+            state = env.reset()
+            done = False
+            while not done:
+                action, _, _ = rl_agent.choose_action(state)
+                state, _, done, info = env.step(action)
+            makespans.append(info['makespan'])
+        
+        results['RL'] = {
+            'avg_makespan': np.mean(makespans),
+            'min_makespan': np.min(makespans),
+            'max_makespan': np.max(makespans),
+            'std_makespan': np.std(makespans)
+        }
+        print(f"\nRL-Agent (über {n_runs} Durchläufe):")
+        print(f"  Durchschnittlicher Makespan: {results['RL']['avg_makespan']:.2f}")
+        print(f"  Minimaler Makespan: {results['RL']['min_makespan']:.2f}")
+        print(f"  Maximaler Makespan: {results['RL']['max_makespan']:.2f}")
+        print(f"  Standardabweichung: {results['RL']['std_makespan']:.2f}")
     
-    # Ergebnisse ausgeben
-    print("\nVergleich der Strategien:")
-    for name, makespan in results.items():
-        print(f"  {name}: Makespan = {makespan:.2f}")
+    # Visualisierung der Ergebnisse
+    plt.figure(figsize=(10, 6))
     
-    # Visualisierung nur wenn gewünscht
-    if show_plots:
-        plt.figure(figsize=(10, 6))
-        plt.bar(results.keys(), results.values())
-        plt.title('Vergleich der Scheduling-Strategien')
-        plt.xlabel('Strategie')
-        plt.ylabel('Makespan')
-        plt.grid(True, axis='y')
-        plt.tight_layout()
-        plt.show()
+    # Balkendiagramm für deterministische Strategien
+    deterministic_strategies = [s for s in strategies if s != 'RANDOM']
+    deterministic_makespans = [results[s]['makespan'] for s in deterministic_strategies]
+    
+    # Balken für deterministische Strategien
+    plt.bar(deterministic_strategies, deterministic_makespans, color='blue', alpha=0.7)
+    
+    # Balken für Zufallsstrategie mit Fehlerbalken
+    random_pos = len(deterministic_strategies)
+    plt.bar(random_pos, results['RANDOM']['avg_makespan'], color='orange', alpha=0.7)
+    plt.errorbar(random_pos, results['RANDOM']['avg_makespan'], 
+                yerr=results['RANDOM']['std_makespan'], fmt='o', color='red')
+    
+    # Balken für RL-Agent, falls vorhanden
+    if include_rl and rl_agent is not None:
+        rl_pos = random_pos + 1
+        plt.bar(rl_pos, results['RL']['avg_makespan'], color='green', alpha=0.7)
+        plt.errorbar(rl_pos, results['RL']['avg_makespan'], 
+                    yerr=results['RL']['std_makespan'], fmt='o', color='red')
+        plt.xticks(range(len(deterministic_strategies) + 2), deterministic_strategies + ['RANDOM', 'RL'])
+    else:
+        plt.xticks(range(len(deterministic_strategies) + 1), deterministic_strategies + ['RANDOM'])
+    
+    plt.ylabel('Makespan')
+    plt.title('Vergleich der Scheduling-Strategien')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    
+    plt.tight_layout()
+    plt.show()
     
     return results
 
@@ -800,7 +1013,17 @@ def main():
     # Modus auswählen
     if args.mode == 'simulate':
         # Simulation durchführen
-        print("Starte Simulation...")
+        print("\n=== Simulation mit Zufallsstrategie ===")
+        random_stats = []
+        for i in range(10):  # 10 Durchläufe
+            stats = simulate_production(data, strategy='RANDOM', random_seed=i)
+            random_stats.append(stats['makespan'])
+            print(f"Durchlauf {i+1}: Makespan = {stats['makespan']:.2f}")
+        
+        print(f"\nDurchschnittlicher Makespan (RANDOM): {np.mean(random_stats):.2f}")
+        print(f"Minimaler Makespan (RANDOM): {np.min(random_stats):.2f}")
+        print(f"Maximaler Makespan (RANDOM): {np.max(random_stats):.2f}")
+        print(f"Standardabweichung (RANDOM): {np.std(random_stats):.2f}")
         stats = simulate_production(data_json, strategy=args.strategy)
         
         # Statistiken anzeigen
@@ -827,7 +1050,8 @@ def main():
         print(f"Bester Makespan: {results['best_makespan']:.2f}")
         
         # Vergleich mit Baseline-Strategien
-        compare_strategies(data_json, agent, show_plots=not args.no_plots)
+        compare_strategies(data, config, include_rl=True, rl_agent=agent, n_runs=10)
+
         
     elif args.mode == 'evaluate':
         # Modell laden
@@ -850,8 +1074,7 @@ def main():
         visualize_schedule(results['best_schedule'], title="Bester Schedule des RL-Agenten")
         
         # Vergleich mit Baseline-Strategien
-        compare_strategies(data_json, agent)
-        
+        compare_strategies(data_json, config, include_rl=True, rl_agent=agent, n_runs=10)
     elif args.mode == 'compare':
         # Strategien vergleichen
         strategies = ['FIFO', 'LIFO', 'SPT']
@@ -865,7 +1088,7 @@ def main():
             print(f"Modell geladen aus: {args.model}")
         
         # Vergleich durchführen
-        results = compare_strategies(data_json, agent, strategies)
+        results = compare_strategies(data_json, config, include_rl=(agent is not None), rl_agent=agent)
         
         # Für jede Strategie einen Schedule visualisieren
         for strategy in strategies:

@@ -35,8 +35,11 @@ class JobSchedulingEnv(gym.Env):
         self.strategies = {
             'FIFO': self._fifo_schedule,
             'LIFO': self._lifo_schedule,
-            'SPT': self._spt_schedule
+            'SPT': self._spt_schedule,
+            'RANDOM': self._random_schedule
         }
+
+        self.machine_materials = self.config.get("machine_initial", {})
         
         self.reset()
     
@@ -55,50 +58,19 @@ class JobSchedulingEnv(gym.Env):
         # Warteschlange für jede Maschine
         self.machine_queues = {machine: deque() for machine in self.machine_availability.keys()}
         
+        # Materialzustand der Maschinen zurücksetzen
+        self.machine_materials = copy.deepcopy(self.config.get("machine_initial", {}))
+        
         # Operationen, die bereit zur Ausführung sind
         self.ready_operations = self._get_ready_operations()
         
         return self._get_observation()
     
     def step(self, action):
-        """
-        Führt einen Schritt in der Umgebung aus
+        """Führt einen Schritt in der Umgebung aus"""
+        # ... existing code ...
         
-        Args:
-            action: Index des auszuführenden Jobs oder Scheduling-Strategie
-        
-        Returns:
-            observation: Neuer Zustand
-            reward: Belohnung für die Aktion
-            done: Ob die Episode beendet ist
-            info: Zusätzliche Informationen
-        """
-        # Wenn action eine Strategie ist (String), verwende diese
-        if isinstance(action, str) and action in self.strategies:
-            job_idx = self.strategies[action]()
-        else:
-            # Sonst verwende den direkten Job-Index
-            job_idx = action % len(self.remaining_jobs) if self.remaining_jobs else 0
-        
-        if not self.remaining_jobs:
-            return self._get_observation(), 0, True, {"makespan": self.makespan}
-        
-        # Job auswählen und ausführen
-        job = self.remaining_jobs[job_idx]
-        completion_time = self._execute_job(job)
-        
-        # Job aus verbleibenden Jobs entfernen und zu abgeschlossenen hinzufügen
-        self.completed_jobs.append(self.remaining_jobs.pop(job_idx))
-        
-        # Makespan aktualisieren
-        self.makespan = max(self.makespan, completion_time)
-        self.job_completion_times[job["Name"]] = completion_time
-        
-        # Belohnung berechnen (negativ, da wir den Makespan minimieren wollen)
-        # In der step-Methode der JobSchedulingEnv-Klasse:
-        
-        # Belohnung berechnen (komplexere Version)
-        # Statt nur negativer Makespan berücksichtigen wir mehrere Faktoren
+        # Belohnung berechnen (verbesserte Version)
         prev_makespan = self.makespan
         new_makespan = max(self.makespan, completion_time)
         makespan_diff = new_makespan - prev_makespan
@@ -109,25 +81,81 @@ class JobSchedulingEnv(gym.Env):
         min_time = min(machine_times) if machine_times else 0
         machine_balance = 1.0 - ((max_time - min_time) / (max_time + 1e-6))  # Ausgewogenheit der Maschinenauslastung
         
-        # Wartezeitfaktor
-        waiting_times = [op['start'] - self.current_time for op in self.scheduled_operations[-5:] if op['start'] > self.current_time]
-        avg_waiting = sum(waiting_times) / len(waiting_times) if waiting_times else 0
-        waiting_factor = math.exp(-avg_waiting / 50.0)  # Exponentiell abnehmende Belohnung für lange Wartezeiten
+        # Kritischer Pfad Analyse
+        # Identifiziere Operationen auf dem kritischen Pfad (längster Pfad im Schedule)
+        critical_path_bonus = 0
+        if self.ready_operations:
+            # Finde Operationen, die zur aktuellen Zeit den längsten verbleibenden Pfad haben
+            remaining_times = []
+            for op in self.ready_operations:
+                job_name = op['job']
+                job = next((j for j in self.remaining_jobs if j['Name'] == job_name), None)
+                if job:
+                    # Berechne die verbleibende Bearbeitungszeit für diesen Job
+                    remaining_time = sum(o['processing_time'] for o in self.ready_operations if o['job'] == job_name)
+                    remaining_times.append(remaining_time)
+            
+            # Wenn die gewählte Operation auf dem kritischen Pfad liegt, gib einen Bonus
+            if remaining_times and action < len(remaining_times):
+                if remaining_times[action] == max(remaining_times):
+                    critical_path_bonus = 10.0
         
-        # Fortschrittsfaktor
+        # Umrüstzeit-Optimierung
+        changeover_penalty = 0
+        if len(self.scheduled_operations) > 0:
+            last_op = self.scheduled_operations[-1]
+            current_op = self.ready_operations[action] if action < len(self.ready_operations) else None
+            
+            if current_op and last_op['machine'] == current_op['machine']:
+                # Prüfe, ob ein Materialwechsel stattfindet
+                last_material = None
+                current_material = None
+                
+                # Finde das Material der letzten Operation
+                for job in self.jobs:
+                    for op in job['Operationen']:
+                        if op['Name'] == last_op['operation']:
+                            if 'produziertesMaterial' in op:
+                                last_material = op['produziertesMaterial']
+                
+                # Finde das Material der aktuellen Operation
+                job_name = current_op['job']
+                op_name = current_op['operation']
+                for job in self.jobs:
+                    if job['Name'] == job_name:
+                        for op in job['Operationen']:
+                            if op['Name'] == op_name:
+                                if 'produziertesMaterial' in op:
+                                    current_material = op['produziertesMaterial']
+                
+                # Wenn beide Materialien bekannt sind und unterschiedlich, berechne die Umrüstzeit
+                if last_material and current_material and last_material != current_material:
+                    changeover_times = self.config.get("changeover_times", {}).get(current_op['machine'], {})
+                    changeover_time = changeover_times.get((last_material, current_material), 0)
+                    changeover_penalty = -changeover_time * 0.5  # Negative Belohnung für Umrüstzeit
+        
+        # Fortschrittsfaktor mit Gewichtung für verbleibende Jobs
         progress = len(self.completed_jobs) / len(self.jobs)
+        remaining_ratio = len(self.remaining_jobs) / len(self.jobs)
+        progress_weight = 1.0 + (1.0 - remaining_ratio) * 2.0  # Höheres Gewicht gegen Ende
         
         # Kombinierte Belohnung mit stärkerer Differenzierung
-        r_makespan = -makespan_diff * 0.5
-        r_balance = machine_balance * 10.0
-        r_waiting = waiting_factor * 5.0
-        r_progress = progress * 20.0
+        r_makespan = -makespan_diff * 2.0  # Erhöhte Gewichtung für Makespan-Reduktion
+        r_balance = machine_balance * 8.0
+        r_critical = critical_path_bonus
+        r_changeover = changeover_penalty
+        r_progress = progress * 15.0 * progress_weight
         
-        # Zufallskomponente für Exploration
-        r_noise = np.random.normal(0, 0.1)
+        # Adaptive Komponente: Belohne stärker, wenn wir uns dem Ende nähern
+        completion_factor = (len(self.completed_jobs) / len(self.jobs)) ** 2
+        adaptive_bonus = completion_factor * 20.0
         
         # Gewichtete Summe
-        reward = r_makespan + r_balance + r_waiting + r_progress + r_noise
+        reward = r_makespan + r_balance + r_critical + r_changeover + r_progress + adaptive_bonus
+        
+        # Zusätzlicher Bonus für Fertigstellung aller Jobs
+        if len(self.remaining_jobs) == 0:
+            reward += 100.0
         
         # Prüfen, ob alle Jobs abgeschlossen sind
         done = len(self.remaining_jobs) == 0
@@ -143,14 +171,25 @@ class JobSchedulingEnv(gym.Env):
         
         for op in job["Operationen"]:
             machine = op["Maschine"]
-            processing_time = op["benötigteZeit"]
+            processing_time = op["benötigteZeit"] 
             
             # Frühester Startzeitpunkt ist die Verfügbarkeit der Maschine
             start_time = max(self.current_time, self.machine_availability[machine])
             
-            # Umrüstzeit hinzufügen, falls vorhanden
-            if "umruestzeit" in op:
-                start_time += op["umruestzeit"]
+            if "produziertesMaterial" in op:
+                required_material = op["produziertesMaterial"]
+                current_material = self.machine_materials.get(machine)
+                
+                if current_material != required_material and current_material is not None:
+                    # Hole die Umrüstzeit aus der Tabelle
+                    changeover_times = self.config.get("changeover_times", {}).get(machine, {})
+                    changeover_time = changeover_times.get((current_material, required_material), 0)
+                    
+                    # Umrüstzeit zum Startzeitpunkt hinzufügen
+                    start_time += changeover_time
+                
+                # Aktualisiere den Materialzustand der Maschine
+                self.machine_materials[machine] = required_material
             
             # Operation ausführen
             end_time = start_time + processing_time
@@ -223,10 +262,20 @@ class JobSchedulingEnv(gym.Env):
             # Anzahl benötigter Werkzeuge
             tools_count = sum(1 for op in job["Operationen"] if "benötigteHilfsmittel" in op)
             waiting_jobs[i, 4] = tools_count / len(job["Operationen"]) if job["Operationen"] else 0
+
+            setup_times = 0
+            for op in job["Operationen"]:
+                if "produziertesMaterial" in op:
+                    machine = op["Maschine"]
+                    required_material = op["produziertesMaterial"]
+                    current_material = self.machine_materials.get(machine)
+                    
+                    if current_material != required_material and current_material is not None:
+                        changeover_times = self.config.get("changeover_times", {}).get(machine, {})
+                        setup_times += changeover_times.get((current_material, required_material), 0)
             
-            # Umrüstzeiten
-            setup_times = sum(op.get("umruestzeit", 0) for op in job["Operationen"])
             waiting_jobs[i, 5] = setup_times / 50  # Normalisiert
+
             
             # Zwischenlagerzeiten
             storage_times = sum(op.get("zwischenlager", {}).get("minVerweildauer", 0) for op in job["Operationen"])
@@ -295,3 +344,9 @@ class JobSchedulingEnv(gym.Env):
         
         # Wähle Job mit kürzester Bearbeitungszeit
         return np.argmin(processing_times)
+
+    def _random_schedule(self):
+        """Zufällige Job-Auswahl"""
+        if not self.remaining_jobs:
+            return 0
+        return random.randint(0, len(self.remaining_jobs) - 1)

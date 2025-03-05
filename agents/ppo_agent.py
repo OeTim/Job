@@ -140,6 +140,16 @@ class PPOAgent:
         self.lr = config.get('lr', 0.0003)  # Lernrate hinzugefügt
         self.entropy_coef = config.get('entropy_coef', 0.01)  # Entropie-Koeffizient hinzugefügt
         
+        # Add epsilon decay for better exploration
+        self.epsilon_start = 1.0
+        self.epsilon_end = 0.05
+        self.epsilon_decay = 0.997  # Langsamerer Decay
+        self.current_epsilon = self.epsilon_start
+        
+        # Add learning rate decay
+        self.lr_decay = 0.999
+        self.min_lr = 0.00001
+        
         # Netzwerk und Optimierer
         obs_dim = {
             'waiting_jobs': env.observation_space['waiting_jobs'].shape,
@@ -161,7 +171,7 @@ class PPOAgent:
     def remember(self, state, action, probs, vals, reward, done):
         self.memory.store(state, action, probs, vals, reward, done)
         
-    def choose_action(self, observation):
+    def choose_action(self, observation, eval_mode=False):
         # Konvertiere Beobachtung zu Tensor
         state = {}
         for key, value in observation.items():
@@ -171,24 +181,34 @@ class PPOAgent:
                 state[key] = torch.tensor([value], dtype=torch.float32).to(self.device)
         
         # Forward pass durch das Netzwerk
-        dist, value = self.actor_critic(state)
-        
-        # Temperatur-Parameter für Exploration
-        temperature = 1.0 + self.entropy_coef * 10  # Skaliert mit dem Entropie-Koeffizienten
-        
-        # Aktion mit Temperatur auswählen
-        dist = Categorical(F.softmax(dist / temperature, dim=-1))
-        
-        # Mit Wahrscheinlichkeit epsilon zufällige Aktion wählen
-        if random.random() < self.entropy_coef:
-            action = torch.randint(0, dist.probs.size(-1), (1,)).item()
-            log_prob = dist.log_prob(torch.tensor(action)).item()
-        else:
-            action = dist.sample()
-            log_prob = torch.squeeze(dist.log_prob(action)).item()
-            action = torch.squeeze(action).item()
-        
+        action_probs, value = self.actor_critic(state)
         value = torch.squeeze(value).item()
+        
+        if eval_mode:
+            # Im Evaluationsmodus: Wähle die Aktion mit der höchsten Wahrscheinlichkeit
+            action = torch.argmax(action_probs).item()
+            log_prob = 0  # Nicht relevant im Evaluationsmodus
+        else:
+            # Im Trainingsmodus: Exploration mit Epsilon-Greedy
+            if random.random() < self.current_epsilon:
+                # Completely random action
+                action = random.randint(0, self.env.action_space.n - 1)
+                # Create categorical distribution from action_probs
+                dist = Categorical(action_probs)
+                log_prob = dist.log_prob(torch.tensor(action, device=self.device)).item()
+            else:
+                # Use policy with temperature for controlled exploration
+                temperature = 1.0 + self.entropy_coef * 5  # Reduced multiplier
+                # Apply temperature to action_probs before creating Categorical
+                scaled_probs = action_probs / temperature
+                dist = Categorical(scaled_probs)
+                action = dist.sample()
+                log_prob = dist.log_prob(action).item()
+                action = action.item()
+            
+            # Decay epsilon
+            self.current_epsilon = max(self.epsilon_end, 
+                                 self.current_epsilon * self.epsilon_decay)
         
         return action, log_prob, value
     
@@ -285,3 +305,31 @@ class PPOAgent:
         
     def load_models(self, path):
         self.actor_critic.load_state_dict(torch.load(path))
+
+class SimplerPPONetwork(nn.Module):
+    def __init__(self, obs_dim, action_dim, config):
+        super(SimplerPPONetwork, self).__init__()
+        
+        # Einfachere Feature-Verarbeitung
+        self.job_encoder = nn.Sequential(
+            nn.Linear(10, 64),
+            nn.ReLU(),
+            nn.Linear(64, 32)
+        )
+        
+        self.machine_encoder = nn.Sequential(
+            nn.Linear(3, 32),
+            nn.ReLU(),
+            nn.Linear(32, 16)
+        )
+        
+        # Gemeinsame Verarbeitung
+        self.shared = nn.Sequential(
+            nn.Linear(48 + 3, 128),  # 32 + 16 + 3 (time features)
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU()
+        )
+        
+        self.actor = nn.Linear(64, action_dim)
+        self.critic = nn.Linear(64, 1)

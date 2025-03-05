@@ -1,254 +1,31 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-import numpy as np
-import random
-import json
-import os
-import simpy
-import torch
 import argparse
-import copy  # Added import for copy module
-from tqdm import tqdm
 from datetime import datetime
+import os
+import networkx as nx
 from pathlib import Path
-# Import custom modules
+import copy  # Add this import
+import numpy as np  # Also add this as it's used in the code
+import random  # Add this for random operations
+import json  # Add this for JSON operations
+import torch  # Add this for torch operations
+from tqdm import tqdm  # Add this for progress bars
+
+from src.utils.config import config, rl_config
+from src.utils.data_generator import generate_synthetic_data, save_data, load_data
+from src.visualization.visualizer import (visualize_graph, visualize_schedule, 
+                                        display_statistics, plot_training_results)
+from src.simulation.simulator import simulate_production, compare_strategies
 from environments.job_env import JobSchedulingEnv
 from agents.ppo_agent import PPOAgent
 
-# Konfiguration für die Produktionsdaten
-# config = {
-#     "n_jobs": 50,           # Anzahl der Jobs
-#     "min_ops": 2,           # Minimale Operationen pro Job
-#     "max_ops": 5,           # Maximale Operationen pro Job
-#     "machines": ["M1", "M2", "M3", "M4"],
-#     "materials": ["Material_A", "Material_B", "Material_C"],
-#     "tools": ["Werkzeug", "Öl", "Kühlmittel", "Schablone"]
-# }
-
-
-config = {
-    "n_jobs": 50,           
-    "min_ops": 2,           
-    "max_ops": 5,           
-    "machines": ["M1", "M2", "M3", "M4"],
-    "materials": ["Material_A", "Material_B", "Material_C"],
-    "tools": ["Werkzeug", "Öl", "Kühlmittel", "Schablone"],
-    # Neuer Eintrag: Startmaterial für jede Maschine
-    "machine_initial": {
-        "M1": "Material_A",
-        "M2": "Material_A",
-        "M3": "Material_A",
-        "M4": "Material_A"
-    },
-    # Neuer Eintrag: Umrüstungstabelle pro Maschine
-    "changeover_times": {
-        "M1": {
-            ("Material_A", "Material_A"): 0,
-            ("Material_A", "Material_B"): 5,
-            ("Material_A", "Material_C"): 7,
-            ("Material_B", "Material_A"): 6,
-            ("Material_B", "Material_B"): 0,
-            ("Material_B", "Material_C"): 8,
-            ("Material_C", "Material_A"): 9,
-            ("Material_C", "Material_B"): 4,
-            ("Material_C", "Material_C"): 0
-        },
-        # Für M2, M3, M4 nehmen wir hier gleiche Werte an – du kannst sie individuell anpassen:
-        "M2": {
-            ("Material_A", "Material_A"): 0,
-            ("Material_A", "Material_B"): 5,
-            ("Material_A", "Material_C"): 7,
-            ("Material_B", "Material_A"): 6,
-            ("Material_B", "Material_B"): 0,
-            ("Material_B", "Material_C"): 8,
-            ("Material_C", "Material_A"): 9,
-            ("Material_C", "Material_B"): 4,
-            ("Material_C", "Material_C"): 0
-        },
-        "M3": {
-            ("Material_A", "Material_A"): 0,
-            ("Material_A", "Material_B"): 5,
-            ("Material_A", "Material_C"): 7,
-            ("Material_B", "Material_A"): 6,
-            ("Material_B", "Material_B"): 0,
-            ("Material_B", "Material_C"): 8,
-            ("Material_C", "Material_A"): 9,
-            ("Material_C", "Material_B"): 4,
-            ("Material_C", "Material_C"): 0
-        },
-        "M4": {
-            ("Material_A", "Material_A"): 0,
-            ("Material_A", "Material_B"): 5,
-            ("Material_A", "Material_C"): 7,
-            ("Material_B", "Material_A"): 6,
-            ("Material_B", "Material_B"): 0,
-            ("Material_B", "Material_C"): 8,
-            ("Material_C", "Material_A"): 9,
-            ("Material_C", "Material_B"): 4,
-            ("Material_C", "Material_C"): 0
-        }
-    }
-}
-
-# Konfiguration für das RL-Training
-rl_config = {
-    # PPO-Hyperparameter
-    "gamma": 0.99,              # Discount-Faktor
-    "policy_clip": 0.2,         # PPO-Clipping-Parameter
-    "n_epochs": 10,             # Anzahl der Epochen pro Update
-    "gae_lambda": 0.95,         # GAE-Lambda-Parameter
-    "batch_size": 64,           # Batch-Größe für Updates
-    "lr": 0.0003,               # Lernrate
-    "entropy_coef": 0.01,       # Entropie-Koeffizient für Exploration
-    
-    # Transformer-Parameter
-    "d_model": 128,             # Dimension des Modells
-    "nhead": 4,                 # Anzahl der Attention-Heads
-    "num_layers": 2,            # Anzahl der Transformer-Layer
-    "dim_feedforward": 512,     # Dimension des Feedforward-Netzwerks
-    
-    # Trainingsparameter
-    "n_episodes": 1000,         # Anzahl der Trainingsepisoden
-    "max_steps": 100,           # Maximale Schritte pro Episode
-    "update_interval": 20,      # Intervall für Netzwerk-Updates
-    "eval_interval": 50,        # Intervall für Evaluierungen
-    "save_interval": 100,       # Intervall zum Speichern des Modells
-}
-
-
-# Konfiguration für das RL-Training
-config = {
-    "n_jobs": 50,           
-    "min_ops": 2,           
-    "max_ops": 5,           
-    "machines": ["M1", "M2", "M3", "M4"],
-    "materials": ["Material_A", "Material_B", "Material_C"],
-    "tools": ["Werkzeug", "Öl", "Kühlmittel", "Schablone"],
-    # Neuer Eintrag: Startmaterial für jede Maschine
-    "machine_initial": {
-        "M1": "Material_A",
-        "M2": "Material_A",
-        "M3": "Material_A",
-        "M4": "Material_A"
-    },
-    # Neuer Eintrag: Umrüstungstabelle pro Maschine
-    "changeover_times": {
-        "M1": {
-            ("Material_A", "Material_A"): 0,
-            ("Material_A", "Material_B"): 5,
-            ("Material_A", "Material_C"): 7,
-            ("Material_B", "Material_A"): 6,
-            ("Material_B", "Material_B"): 0,
-            ("Material_B", "Material_C"): 8,
-            ("Material_C", "Material_A"): 9,
-            ("Material_C", "Material_B"): 4,
-            ("Material_C", "Material_C"): 0
-        },
-        # Für M2, M3, M4 nehmen wir hier gleiche Werte an – du kannst sie individuell anpassen:
-        "M2": {
-            ("Material_A", "Material_A"): 0,
-            ("Material_A", "Material_B"): 5,
-            ("Material_A", "Material_C"): 7,
-            ("Material_B", "Material_A"): 6,
-            ("Material_B", "Material_B"): 0,
-            ("Material_B", "Material_C"): 8,
-            ("Material_C", "Material_A"): 9,
-            ("Material_C", "Material_B"): 4,
-            ("Material_C", "Material_C"): 0
-        },
-        "M3": {
-            ("Material_A", "Material_A"): 0,
-            ("Material_A", "Material_B"): 5,
-            ("Material_A", "Material_C"): 7,
-            ("Material_B", "Material_A"): 6,
-            ("Material_B", "Material_B"): 0,
-            ("Material_B", "Material_C"): 8,
-            ("Material_C", "Material_A"): 9,
-            ("Material_C", "Material_B"): 4,
-            ("Material_C", "Material_C"): 0
-        },
-        "M4": {
-            ("Material_A", "Material_A"): 0,
-            ("Material_A", "Material_B"): 5,
-            ("Material_A", "Material_C"): 7,
-            ("Material_B", "Material_A"): 6,
-            ("Material_B", "Material_B"): 0,
-            ("Material_B", "Material_C"): 8,
-            ("Material_C", "Material_A"): 9,
-            ("Material_C", "Material_B"): 4,
-            ("Material_C", "Material_C"): 0
-        }
-    }
-}
-
-# Globale Variablen für den Datenzustand
-G = None                  # Graph
-op_to_job = {}            # Zuordnung von Operationen zu Jobs
-conflict_edges = []       # Maschinenkonflikte
-data_json = None          # Gespeicherte Daten
-
-def generate_synthetic_data(config):
-    """Generiert synthetische Produktionsdaten"""
-    jobs = []
-
-    for i in range(1, config["n_jobs"] + 1):
-        n_ops = random.randint(config["min_ops"], config["max_ops"])
-        operations = []
-
-        for j in range(1, n_ops + 1):
-            operation = {
-                "Name": f"Job_{i}_Op{j}",
-                "benötigteZeit": random.randint(20, 60),
-                "Maschine": random.choice(config["machines"]),
-                "Vorgänger": [f"Job_{i}_Op{j-1}"] if j > 1 else None,
-                "produziertesMaterial": random.choice(config["materials"])
-            }
-
-            # Zufällig zusätzliche Attribute hinzufügen
-            if random.random() < 0.4:  # 40% Wahrscheinlichkeit für Hilfsmittel
-                n_tools = random.randint(1, 2)
-                operation["benötigteHilfsmittel"] = random.sample(config["tools"], n_tools)
-                # operation["umruestzeit"] = random.randint(1, 10)
-                operation["umruestkosten"] = random.randint(10, 50)
-
-            if random.random() < 0.3:  # 30% Wahrscheinlichkeit für Zwischenlager
-                operation["zwischenlager"] = {
-                    "minVerweildauer": random.randint(5, 20),
-                    "lagerkosten": random.randint(1, 5)
-                }
-
-            operations.append(operation)
-
-        job = {
-            "Name": f"Job_{i}",
-            "Priorität": random.randint(1, 10),
-            "Operationen": operations
-        }
-
-        jobs.append(job)
-
-    generated_data = {"jobs": jobs}
-    print(f"✅ Synthetische Daten für {config['n_jobs']} Jobs generiert")
-    return generated_data
-
-def save_data(data, filename="production_data.json"):
-    """Speichert die generierten Daten in eine JSON-Datei"""
-    filepath = os.path.join(os.getcwd(), filename)
-    with open(filepath, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
-    print(f"✅ Daten gespeichert in: {filepath}")
-    return filepath
-
-def load_data(filename="production_data.json"):
-    """Lädt Daten aus einer JSON-Datei"""
-    filepath = os.path.join(os.getcwd(), filename)
-    with open(filepath, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    print(f"✅ Daten geladen aus: {filepath}")
-    return data
+# Global variables for data state
+G = None
+op_to_job = {}
+conflict_edges = []
+data_json = None
 
 def build_dependency_graph(data):
-    """Erstellt einen Abhängigkeitsgraphen aus den Produktionsdaten"""
+    """Creates a dependency graph from production data"""
     global G, op_to_job, conflict_edges
     
     G = nx.DiGraph()
@@ -293,277 +70,7 @@ def build_dependency_graph(data):
     print(f"✅ {len(conflict_edges)} Maschinenkonflikte identifiziert")
     return G, conflict_edges
 
-def visualize_graph(G, conflict_edges=None, figsize=(12, 8)):
-    """Visualisiert den Abhängigkeitsgraphen"""
-    plt.figure(figsize=figsize)
-    
-    # Position der Knoten berechnen
-    pos = nx.spring_layout(G, seed=42)
-    
-    # Knoten nach Job einfärben
-    job_colors = {}
-    color_map = []
-    
-    for node in G.nodes():
-        job = G.nodes[node]["job"]
-        if job not in job_colors:
-            job_colors[job] = np.random.rand(3,)
-        color_map.append(job_colors[job])
-    
-    # Knoten zeichnen
-    nx.draw_networkx_nodes(G, pos, node_size=300, node_color=color_map, alpha=0.8)
-    
-    # Abhängigkeitskanten zeichnen
-    nx.draw_networkx_edges(G, pos, edgelist=[(u, v) for u, v, d in G.edges(data=True) 
-                                            if d.get('type') == 'precedence'],
-                          width=1.5, edge_color='black', arrows=True)
-    
-    # Konfliktkanten zeichnen, falls vorhanden
-    if conflict_edges:
-        nx.draw_networkx_edges(G, pos, edgelist=conflict_edges,
-                              width=1.0, edge_color='red', style='dashed', arrows=False)
-    
-    # Knotenbeschriftungen
-    nx.draw_networkx_labels(G, pos, font_size=8)
-    
-    plt.title("Abhängigkeitsgraph der Produktionsplanung")
-    plt.axis('off')
-    plt.tight_layout()
-    plt.show()
 
-def simulate_production(data, strategy=None, random_seed=42):
-    """
-    Simuliert die Produktion mit SimPy
-    
-    Args:
-        data: Produktionsdaten
-        strategy: Scheduling-Strategie (None, 'FIFO', 'LIFO', 'SPT')
-        random_seed: Seed für Zufallszahlen
-    """
-    random.seed(random_seed)
-    env = simpy.Environment()
-    machine_states = config.get("machine_initial", {machine: None for machine in config["machines"]})
-    
-    # Ressourcen erstellen
-    machines = {machine: simpy.Resource(env, capacity=1) for machine in config["machines"]}
-    tools = {tool: simpy.Resource(env, capacity=3) for tool in config["tools"]}
-    
-    # Statistiken
-    stats = {
-        "job_completion_times": {},
-        "machine_utilization": {machine: 0 for machine in machines},
-        "tool_utilization": {tool: 0 for tool in tools},
-        "waiting_times": [],
-        "scheduled_operations": []  # Liste der geplanten Operationen für Gantt-Diagramm
-    }
-    
-    # Prozess für einen Job
-    def job_process(env, job):
-        job_name = job["Name"]
-        start_time = env.now
-        
-        for op in job["Operationen"]:
-            op_name = op["Name"]
-            machine_name = op["Maschine"]
-            
-            # Warten auf Maschine
-            wait_start = env.now
-            with machines[machine_name].request() as req:
-                yield req
-                wait_time = env.now - wait_start
-                stats["waiting_times"].append(wait_time)
-                
-                # Werkzeuge anfordern, falls benötigt
-                tool_reqs = []
-                if "benötigteHilfsmittel" in op:
-                    for tool in op["benötigteHilfsmittel"]:
-                        tool_reqs.append(tools[tool].request())
-                    
-                    # Auf alle Werkzeuge warten
-                    for req in tool_reqs:
-                        yield req
-                
-                # # Umrüstzeit, falls vorhanden
-                # if "umruestzeit" in op:
-                #     yield env.timeout(op["umruestzeit"])
-                
-                required_material = op["produziertesMaterial"]
-                current_material = machine_states[machine_name]
-                if current_material != required_material:
-                    # Hole die Umrüstzeit aus der Tabelle
-                    changeover_table = config["changeover_times"].get(machine_name, {})
-                    # Falls current_material None ist, kann man optional keinen Wechsel oder einen definierten Initialwert nehmen
-                    changeover_time = changeover_table.get((current_material, required_material), 0)
-                    if changeover_time > 0:
-                        print(f"Maschine {machine_name} wechselt von {current_material} zu {required_material}. Umrüstzeit: {changeover_time}")
-                        yield env.timeout(changeover_time)
-                        # OPTIONAL: Hier könnte man einen Strafwert (Penalty) für die Umrüstung einbauen, z.B.:
-                        # stats["umruest_penalties"].append(changeover_time)
-                    # Aktualisiere den Maschinenzustand
-                    machine_states[machine_name] = required_material
-
-                # Operation ausführen
-                operation_start = env.now
-                yield env.timeout(op["benötigteZeit"])
-                operation_end = env.now
-                
-                # Operation zur Liste der geplanten Operationen hinzufügen
-                stats["scheduled_operations"].append({
-                    "job": job_name,
-                    "operation": op_name,
-                    "machine": machine_name,
-                    "start": operation_start,
-                    "end": operation_end
-                })
-                
-                # Maschinennutzung aktualisieren
-                stats["machine_utilization"][machine_name] += op["benötigteZeit"]
-                
-                # Werkzeuge freigeben
-                for i, tool in enumerate(op.get("benötigteHilfsmittel", [])):
-                    stats["tool_utilization"][tool] += op["benötigteZeit"]
-                    tools[tool].release(tool_reqs[i])
-                
-                # Zwischenlagerung, falls erforderlich
-                if "zwischenlager" in op:
-                    yield env.timeout(op["zwischenlager"]["minVerweildauer"])
-        
-        # Job abgeschlossen
-        completion_time = env.now - start_time
-        stats["job_completion_times"][job_name] = completion_time
-    
-    # Jobs nach Strategie sortieren
-    jobs = data["jobs"].copy()
-    if strategy == 'FIFO':
-        # FIFO: Keine Änderung der Reihenfolge
-        pass
-    elif strategy == 'LIFO':
-        # LIFO: Umgekehrte Reihenfolge
-        jobs.reverse()
-    elif strategy == 'SPT':
-        # SPT: Sortieren nach Gesamtbearbeitungszeit
-        jobs.sort(key=lambda job: sum(op["benötigteZeit"] for op in job["Operationen"]))
-    elif strategy == 'RANDOM':
-        # RANDOM: Zufällige Reihenfolge
-        random.shuffle(jobs)
-    
-    # Alle Jobs starten
-    for job in jobs:
-        env.process(job_process(env, job))
-    
-    # Simulation ausführen
-    env.run()
-    
-    # Makespan berechnen
-    makespan = max(stats["job_completion_times"].values()) if stats["job_completion_times"] else 0
-    stats["makespan"] = makespan
-    
-    return stats
-
-def display_statistics(stats, title="Produktionsstatistiken"):
-    """Zeigt Statistiken der Simulation an"""
-    simulation_time = stats.get("makespan", 0)
-    
-    # Durchschnittliche Fertigstellungszeit
-    avg_completion = sum(stats["job_completion_times"].values()) / len(stats["job_completion_times"]) if stats["job_completion_times"] else 0
-    
-    # Maschinenauslastung
-    machine_util = {m: (t / simulation_time) * 100 for m, t in stats["machine_utilization"].items()} if simulation_time > 0 else {}
-    
-    # Werkzeugauslastung
-    tool_util = {t: (u / simulation_time) * 100 for t, u in stats["tool_utilization"].items()} if simulation_time > 0 else {}
-    
-    # Durchschnittliche Wartezeit
-    avg_waiting = sum(stats["waiting_times"]) / len(stats["waiting_times"]) if stats["waiting_times"] else 0
-    
-    # Ausgabe
-    print(f"\n=== {title} ===")
-    print(f"Makespan: {simulation_time:.2f} Zeiteinheiten")
-    print(f"Durchschnittliche Fertigstellungszeit: {avg_completion:.2f} Zeiteinheiten")
-    print(f"Durchschnittliche Wartezeit: {avg_waiting:.2f} Zeiteinheiten")
-    
-    print("\nMaschinenauslastung:")
-    for machine, util in machine_util.items():
-        print(f"  {machine}: {util:.2f}%")
-    
-    print("\nWerkzeugauslastung:")
-    for tool, util in tool_util.items():
-        print(f"  {tool}: {util:.2f}%")
-    
-    # Visualisierung
-    plt.figure(figsize=(12, 6))
-    
-    # Fertigstellungszeiten
-    plt.subplot(1, 2, 1)
-    plt.bar(stats["job_completion_times"].keys(), stats["job_completion_times"].values())
-    plt.title("Fertigstellungszeiten der Jobs")
-    plt.xticks(rotation=90)
-    plt.ylabel("Zeit")
-    
-    # Maschinenauslastung
-    plt.subplot(1, 2, 2)
-    plt.bar(machine_util.keys(), machine_util.values())
-    plt.title("Maschinenauslastung")
-    plt.ylabel("Auslastung (%)")
-    
-    plt.tight_layout()
-    plt.show()
-
-def visualize_schedule(schedule, title="Job-Scheduling-Plan"):
-    """
-    Visualisiert einen Scheduling-Plan als Gantt-Diagramm
-    
-    Args:
-        schedule: Liste von geplanten Operationen
-        title: Titel des Diagramms
-    """
-    if not schedule:
-        print("Kein Schedule zum Visualisieren vorhanden.")
-        return
-    
-    # Daten für das Gantt-Diagramm vorbereiten
-    machines = sorted(list(set([op['machine'] for op in schedule])))
-    jobs = sorted(list(set([op['job'] for op in schedule])))
-    
-    # Farbzuordnung für Jobs
-    colors = plt.cm.tab20(np.linspace(0, 1, len(jobs)))
-    job_colors = {job: colors[i] for i, job in enumerate(jobs)}
-    
-    # Gantt-Diagramm erstellen
-    fig, ax = plt.subplots(figsize=(15, 8))
-    
-    # Y-Achse: Maschinen
-    y_ticks = list(range(len(machines)))
-    ax.set_yticks(y_ticks)
-    ax.set_yticklabels(machines)
-    
-    # Operationen zeichnen
-    for op in schedule:
-        machine_idx = machines.index(op['machine'])
-        start_time = op['start']
-        duration = op['end'] - op['start']
-        
-        # Rechteck für die Operation zeichnen
-        ax.barh(machine_idx, duration, left=start_time, height=0.5, 
-                color=job_colors[op['job']], alpha=0.8)
-        
-        # Beschriftung hinzufügen
-        ax.text(start_time + duration/2, machine_idx, op['operation'], 
-                ha='center', va='center', color='black', fontsize=8)
-    
-    # Legende für Jobs
-    from matplotlib.patches import Patch
-    legend_elements = [Patch(facecolor=job_colors[job], label=job) for job in jobs]
-    ax.legend(handles=legend_elements, loc='upper right')
-    
-    # Diagramm-Beschriftung
-    ax.set_xlabel('Zeit')
-    ax.set_ylabel('Maschine')
-    ax.set_title(title)
-    ax.grid(True)
-    
-    plt.tight_layout()
-    plt.show()
 
 def train_rl_agent(data, config=None, rl_config=None, show_plots=False):
     """
@@ -763,154 +270,10 @@ def evaluate_agent(data, agent, n_episodes=10):
     
     return results
 
-def compare_strategies(data, config=None, include_rl=False, rl_agent=None, n_runs=5):
-    """
-    Vergleicht verschiedene Scheduling-Strategien
-    
-    Args:
-        data: Produktionsdaten
-        config: Konfiguration
-        include_rl: Ob der RL-Agent einbezogen werden soll
-        rl_agent: Der trainierte RL-Agent
-        n_runs: Anzahl der Durchläufe für die Zufallsstrategie
-    """
-    strategies = ['FIFO', 'LIFO', 'SPT', 'RANDOM']
-    results = {}
-    
-    env = JobSchedulingEnv(data, config)
-    
-    # Strategien testen
-    for strategy in strategies:
-        if strategy == 'RANDOM':
-            # Mehrere Durchläufe für die Zufallsstrategie
-            makespans = []
-            for _ in range(n_runs):
-                env.reset()
-                done = False
-                while not done:
-                    _, _, done, info = env.step('RANDOM')
-                makespans.append(info['makespan'])
-            
-            # Durchschnitt, Minimum und Maximum berechnen
-            results[strategy] = {
-                'avg_makespan': np.mean(makespans),
-                'min_makespan': np.min(makespans),
-                'max_makespan': np.max(makespans),
-                'std_makespan': np.std(makespans)
-            }
-            print(f"\n{strategy} (über {n_runs} Durchläufe):")
-            print(f"  Durchschnittlicher Makespan: {results[strategy]['avg_makespan']:.2f}")
-            print(f"  Minimaler Makespan: {results[strategy]['min_makespan']:.2f}")
-            print(f"  Maximaler Makespan: {results[strategy]['max_makespan']:.2f}")
-            print(f"  Standardabweichung: {results[strategy]['std_makespan']:.2f}")
-        else:
-            # Einzelner Durchlauf für deterministische Strategien
-            env.reset()
-            done = False
-            while not done:
-                _, _, done, info = env.step(strategy)
-            
-            results[strategy] = {'makespan': info['makespan']}
-            print(f"\n{strategy}:")
-            print(f"  Makespan: {info['makespan']:.2f}")
-    
-    # RL-Agent testen, falls gewünscht
-    if include_rl and rl_agent is not None:
-        makespans = []
-        for _ in range(n_runs):
-            state = env.reset()
-            done = False
-            while not done:
-                action, _, _ = rl_agent.choose_action(state)
-                state, _, done, info = env.step(action)
-            makespans.append(info['makespan'])
-        
-        results['RL'] = {
-            'avg_makespan': np.mean(makespans),
-            'min_makespan': np.min(makespans),
-            'max_makespan': np.max(makespans),
-            'std_makespan': np.std(makespans)
-        }
-        print(f"\nRL-Agent (über {n_runs} Durchläufe):")
-        print(f"  Durchschnittlicher Makespan: {results['RL']['avg_makespan']:.2f}")
-        print(f"  Minimaler Makespan: {results['RL']['min_makespan']:.2f}")
-        print(f"  Maximaler Makespan: {results['RL']['max_makespan']:.2f}")
-        print(f"  Standardabweichung: {results['RL']['std_makespan']:.2f}")
-    
-    # Visualisierung der Ergebnisse
-    plt.figure(figsize=(10, 6))
-    
-    # Balkendiagramm für deterministische Strategien
-    deterministic_strategies = [s for s in strategies if s != 'RANDOM']
-    deterministic_makespans = [results[s]['makespan'] for s in deterministic_strategies]
-    
-    # Balken für deterministische Strategien
-    plt.bar(deterministic_strategies, deterministic_makespans, color='blue', alpha=0.7)
-    
-    # Balken für Zufallsstrategie mit Fehlerbalken
-    random_pos = len(deterministic_strategies)
-    plt.bar(random_pos, results['RANDOM']['avg_makespan'], color='orange', alpha=0.7)
-    plt.errorbar(random_pos, results['RANDOM']['avg_makespan'], 
-                yerr=results['RANDOM']['std_makespan'], fmt='o', color='red')
-    
-    # Balken für RL-Agent, falls vorhanden
-    if include_rl and rl_agent is not None:
-        rl_pos = random_pos + 1
-        plt.bar(rl_pos, results['RL']['avg_makespan'], color='green', alpha=0.7)
-        plt.errorbar(rl_pos, results['RL']['avg_makespan'], 
-                    yerr=results['RL']['std_makespan'], fmt='o', color='red')
-        plt.xticks(range(len(deterministic_strategies) + 2), deterministic_strategies + ['RANDOM', 'RL'])
-    else:
-        plt.xticks(range(len(deterministic_strategies) + 1), deterministic_strategies + ['RANDOM'])
-    
-    plt.ylabel('Makespan')
-    plt.title('Vergleich der Scheduling-Strategien')
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    
-    plt.tight_layout()
-    plt.show()
-    
-    return results
 
-def plot_training_results(results, show_plots=True, save_plots=True):
-    """Visualisiert die Trainingsergebnisse"""
-    if not (show_plots or save_plots):
-        return
-        
-    plt.figure(figsize=(15, 10))
-    
-    # Plot für Belohnungen
-    plt.subplot(2, 1, 1)
-    plt.plot(results['rewards'])
-    plt.title('Belohnungen während des Trainings')
-    plt.xlabel('Episode')
-    plt.ylabel('Belohnung')
-    plt.grid(True)
-    
-    # Plot für Makespan
-    plt.subplot(2, 1, 2)
-    plt.plot(results['makespans'])
-    plt.title('Makespan während des Trainings')
-    plt.xlabel('Episode')
-    plt.ylabel('Makespan')
-    plt.grid(True)
-    
-    plt.tight_layout()
-    
-    # Speichern der Grafik
-    if save_plots:
-        plots_dir = os.path.join(os.getcwd(), 'plots')
-        os.makedirs(plots_dir, exist_ok=True)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        plt.savefig(os.path.join(plots_dir, f"training_results_{timestamp}.png"))
-    
-    if show_plots:
-        plt.show()
-    else:
-        plt.close()
 
 def main():
-    """Hauptfunktion zum Ausführen des Programms"""
+    """Main function to run the program"""
     global data_json
     
     parser = argparse.ArgumentParser(description='Job-Scheduling-Optimierung mit RL')
@@ -963,7 +326,6 @@ def main():
         data_json = generate_synthetic_data(config)
         save_data(data_json)
     
-    # Rest der Funktion bleibt unverändert...
     # Graph erstellen
     G, conflicts = build_dependency_graph(data_json)
     
@@ -973,7 +335,8 @@ def main():
         print("\n=== Simulation mit Zufallsstrategie ===")
         random_stats = []
         for i in range(10):  # 10 Durchläufe
-            stats = simulate_production(data, strategy='RANDOM', random_seed=i)
+            # Fix: Use data_json instead of data
+            stats = simulate_production(data_json, strategy='RANDOM', random_seed=i)
             random_stats.append(stats['makespan'])
             print(f"Durchlauf {i+1}: Makespan = {stats['makespan']:.2f}")
         
@@ -981,16 +344,8 @@ def main():
         print(f"Minimaler Makespan (RANDOM): {np.min(random_stats):.2f}")
         print(f"Maximaler Makespan (RANDOM): {np.max(random_stats):.2f}")
         print(f"Standardabweichung (RANDOM): {np.std(random_stats):.2f}")
+        # Fix: Use data_json instead of data
         stats = simulate_production(data_json, strategy=args.strategy)
-        
-        # Statistiken anzeigen
-        display_statistics(stats)
-        
-        # Gantt-Diagramm anzeigen
-        visualize_schedule(stats["scheduled_operations"], title=f"Job-Scheduling-Plan ({args.strategy or 'Standard'})")
-        
-        # Graph visualisieren
-        visualize_graph(G, conflicts)
         
     elif args.mode == 'train':
         # RL-Konfiguration anpassen
@@ -1044,18 +399,103 @@ def main():
             agent.load_models(args.model)
             print(f"Modell geladen aus: {args.model}")
         
+        # Get total operations from data
+        total_ops = sum(len(job["Operationen"]) for job in data_json["jobs"])
+        print(f"\nGesamtanzahl Operationen im Datensatz: {total_ops}")
+        
         # Vergleich durchführen
         results = compare_strategies(data_json, config, include_rl=(agent is not None), rl_agent=agent)
         
         # Für jede Strategie einen Schedule visualisieren
         for strategy in strategies:
-            stats = simulate_production(data_json, strategy=strategy)
-            visualize_schedule(stats["scheduled_operations"], title=f"Schedule mit {strategy}")
+            stats = simulate_production(data_json, config=config, strategy=strategy)
+            # Ensure all operations are included in visualization
+            all_operations = []
+            for job in data_json["jobs"]:
+                for op in job["Operationen"]:
+                    # Check if operation is in scheduled_operations
+                    scheduled_op = next((sop for sop in stats["scheduled_operations"] 
+                                      if sop["job"] == job["Name"] and sop["operation"] == op["Name"]), None)
+                    if scheduled_op:
+                        all_operations.append(scheduled_op)
+                    else:
+                        # Add unscheduled operation with zero duration
+                        all_operations.append({
+                            "job": job["Name"],
+                            "operation": op["Name"],
+                            "machine": op["Maschine"],
+                            "start": 0,
+                            "end": 0
+                        })
+            
+            visualize_schedule(all_operations, title=f"Schedule mit {strategy}")
         
-        # Wenn Agent vorhanden, auch dessen besten Schedule visualisieren
+        # Wenn Agent vorhanden, auch dessen Schedule mit allen Operationen visualisieren
         if agent:
             agent_results = evaluate_agent(data_json, agent, n_episodes=5)
-            visualize_schedule(agent_results['best_schedule'], title="Bester Schedule des RL-Agenten")
+            best_schedule = agent_results['best_schedule']
+            
+            # Zähle die Gesamtanzahl der Operationen in den Originaldaten
+            total_ops_count = sum(len(job["Operationen"]) for job in data_json["jobs"])
+            scheduled_ops_count = len(best_schedule)
+            
+            print(f"\nOperationsstatistik für RL-Agent:")
+            print(f"  Geplante Operationen: {scheduled_ops_count}")
+            print(f"  Gesamtanzahl möglicher Operationen: {total_ops_count}")
+            
+            # Stelle sicher, dass alle Operationen in der Visualisierung enthalten sind
+            all_operations = []
+            original_jobs = copy.deepcopy(data_json["jobs"])
+            
+            # Füge alle geplanten Operationen hinzu
+            for op in best_schedule:
+                all_operations.append(op)
+            
+            # Überprüfe, ob alle Operationen aus den Originaldaten enthalten sind
+            for job in original_jobs:
+                job_name = job["Name"]
+                for op in job["Operationen"]:
+                    op_name = op["Name"]
+                    # Prüfe, ob die Operation bereits im Schedule enthalten ist
+                    if not any(sched_op["job"] == job_name and sched_op["operation"] == op_name for sched_op in all_operations):
+                        # Füge fehlende Operation hinzu
+                        all_operations.append({
+                            "job": job_name,
+                            "operation": op_name,
+                            "machine": op["Maschine"],
+                            "start": 0,
+                            "end": 0  # Setze Dauer auf 0 für nicht geplante Operationen
+                        })
+            
+            visualize_schedule(all_operations, title="Vollständiger Schedule des RL-Agenten")
+            
+            # Entfernen Sie diese zweite Visualisierung, die nur die geplanten Operationen zeigt
+            # visualize_schedule(best_schedule, title="Bester Schedule des RL-Agenten")
+            
+            # Count total operations in original data
+            total_ops = sum(len(job["Operationen"]) for job in data_json["jobs"])
+            
+            print("\nVergleich der Operationen:")
+            print(f"Gesamtanzahl möglicher Operationen: {total_ops}")
+            print(f"Anzahl geplanter Operationen (RL-Agent): {len(best_schedule)}")
+            
+            visualize_schedule(best_schedule, title="Bester Schedule des RL-Agenten")
+            
+            # Berechne Maschinenauslastung für den RL-Agenten
+            machine_times = {}
+            for op in best_schedule:
+                machine = op['machine']
+                duration = op['end'] - op['start']
+                if machine not in machine_times:
+                    machine_times[machine] = 0
+                machine_times[machine] += duration
+            
+            makespan = agent_results['min_makespan']
+            machine_utilization = {m: time/makespan*100 for m, time in machine_times.items()}
+            
+            print(f"\nDetaillierte Statistiken für RL-Agent:")
+            print(f"  Bester Makespan: {makespan:.2f}")
+            print(f"  Durchschnittliche Maschinenauslastung: {np.mean(list(machine_utilization.values())):.2f}%")
     
     print("\nProgramm erfolgreich beendet.")
 

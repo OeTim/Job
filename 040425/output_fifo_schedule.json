@@ -1,0 +1,2662 @@
+{
+    "scheduling_method": "FIFO",
+    "makespan": 5390,
+    "total_setup_time": 1870,
+    "jobs": [
+        {
+            "Name": "Job_1",
+            "Priorität": 1,
+            "Operationen": [
+                {
+                    "Name": "Job_1_Op1",
+                    "benötigteZeit": 21,
+                    "Maschine": "M3",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel",
+                        "Werkzeug",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 28,
+                    "geplanter_Start": 0,
+                    "geplantes_Ende": 49
+                }
+            ]
+        },
+        {
+            "Name": "Job_10",
+            "Priorität": 7,
+            "Operationen": [
+                {
+                    "Name": "Job_10_Op1",
+                    "benötigteZeit": 46,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel",
+                        "Schablone",
+                        "Öl"
+                    ],
+                    "umruestkosten": 33,
+                    "geplanter_Start": 0,
+                    "geplantes_Ende": 79
+                },
+                {
+                    "Name": "Job_10_Op2",
+                    "benötigteZeit": 26,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_10_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 15,
+                    "zwischenlager": {
+                        "minVerweildauer": 13,
+                        "lagerkosten": 1
+                    },
+                    "geplanter_Start": 79,
+                    "geplantes_Ende": 120
+                },
+                {
+                    "Name": "Job_10_Op3",
+                    "benötigteZeit": 48,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_10_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 120,
+                    "geplantes_Ende": 168
+                },
+                {
+                    "Name": "Job_10_Op4",
+                    "benötigteZeit": 20,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_10_Op3",
+                        "Job_10_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 37,
+                    "geplanter_Start": 168,
+                    "geplantes_Ende": 225
+                }
+            ]
+        },
+        {
+            "Name": "Job_11",
+            "Priorität": 2,
+            "Operationen": [
+                {
+                    "Name": "Job_11_Op1",
+                    "benötigteZeit": 49,
+                    "Maschine": "M3",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 49,
+                    "geplantes_Ende": 98
+                },
+                {
+                    "Name": "Job_11_Op2",
+                    "benötigteZeit": 55,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_11_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 28,
+                    "geplanter_Start": 98,
+                    "geplantes_Ende": 181
+                },
+                {
+                    "Name": "Job_11_Op3",
+                    "benötigteZeit": 23,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_11_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 40,
+                    "geplanter_Start": 181,
+                    "geplantes_Ende": 244
+                }
+            ]
+        },
+        {
+            "Name": "Job_12",
+            "Priorität": 9,
+            "Operationen": [
+                {
+                    "Name": "Job_12_Op1",
+                    "benötigteZeit": 24,
+                    "Maschine": "M2",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Werkzeug",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 29,
+                    "zwischenlager": {
+                        "minVerweildauer": 20,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 120,
+                    "geplantes_Ende": 173
+                },
+                {
+                    "Name": "Job_12_Op2",
+                    "benötigteZeit": 56,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_12_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Kühlmittel",
+                        "Öl"
+                    ],
+                    "umruestkosten": 22,
+                    "zwischenlager": {
+                        "minVerweildauer": 20,
+                        "lagerkosten": 3
+                    },
+                    "geplanter_Start": 244,
+                    "geplantes_Ende": 322
+                },
+                {
+                    "Name": "Job_12_Op3",
+                    "benötigteZeit": 49,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_12_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel",
+                        "Schablone",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 26,
+                    "zwischenlager": {
+                        "minVerweildauer": 15,
+                        "lagerkosten": 1
+                    },
+                    "geplanter_Start": 322,
+                    "geplantes_Ende": 397
+                },
+                {
+                    "Name": "Job_12_Op4",
+                    "benötigteZeit": 35,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_12_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Schablone",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 31,
+                    "geplanter_Start": 397,
+                    "geplantes_Ende": 463
+                },
+                {
+                    "Name": "Job_12_Op5",
+                    "benötigteZeit": 39,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_12_Op4",
+                        "Job_12_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Öl"
+                    ],
+                    "umruestkosten": 18,
+                    "zwischenlager": {
+                        "minVerweildauer": 13,
+                        "lagerkosten": 3
+                    },
+                    "geplanter_Start": 463,
+                    "geplantes_Ende": 520
+                }
+            ]
+        },
+        {
+            "Name": "Job_13",
+            "Priorität": 7,
+            "Operationen": [
+                {
+                    "Name": "Job_13_Op1",
+                    "benötigteZeit": 36,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 520,
+                    "geplantes_Ende": 556
+                },
+                {
+                    "Name": "Job_13_Op2",
+                    "benötigteZeit": 22,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_13_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 556,
+                    "geplantes_Ende": 578
+                },
+                {
+                    "Name": "Job_13_Op3",
+                    "benötigteZeit": 36,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_13_Op2"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 578,
+                    "geplantes_Ende": 614
+                },
+                {
+                    "Name": "Job_13_Op4",
+                    "benötigteZeit": 55,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_13_Op3"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Werkzeug",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 36,
+                    "geplanter_Start": 614,
+                    "geplantes_Ende": 705
+                }
+            ]
+        },
+        {
+            "Name": "Job_14",
+            "Priorität": 6,
+            "Operationen": [
+                {
+                    "Name": "Job_14_Op1",
+                    "benötigteZeit": 22,
+                    "Maschine": "M3",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 463,
+                    "geplantes_Ende": 485
+                },
+                {
+                    "Name": "Job_14_Op2",
+                    "benötigteZeit": 22,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_14_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 485,
+                    "geplantes_Ende": 507
+                }
+            ]
+        },
+        {
+            "Name": "Job_15",
+            "Priorität": 7,
+            "Operationen": [
+                {
+                    "Name": "Job_15_Op1",
+                    "benötigteZeit": 46,
+                    "Maschine": "M2",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 614,
+                    "geplantes_Ende": 660
+                },
+                {
+                    "Name": "Job_15_Op2",
+                    "benötigteZeit": 31,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_15_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 37,
+                    "geplanter_Start": 660,
+                    "geplantes_Ende": 728
+                },
+                {
+                    "Name": "Job_15_Op3",
+                    "benötigteZeit": 35,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_15_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "zwischenlager": {
+                        "minVerweildauer": 10,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 728,
+                    "geplantes_Ende": 763
+                },
+                {
+                    "Name": "Job_15_Op4",
+                    "benötigteZeit": 34,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_15_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Öl"
+                    ],
+                    "umruestkosten": 10,
+                    "geplanter_Start": 763,
+                    "geplantes_Ende": 807
+                },
+                {
+                    "Name": "Job_15_Op5",
+                    "benötigteZeit": 45,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_15_Op4",
+                        "Job_15_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 807,
+                    "geplantes_Ende": 852
+                }
+            ]
+        },
+        {
+            "Name": "Job_16",
+            "Priorität": 10,
+            "Operationen": [
+                {
+                    "Name": "Job_16_Op1",
+                    "benötigteZeit": 41,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "zwischenlager": {
+                        "minVerweildauer": 19,
+                        "lagerkosten": 3
+                    },
+                    "geplanter_Start": 705,
+                    "geplantes_Ende": 746
+                },
+                {
+                    "Name": "Job_16_Op2",
+                    "benötigteZeit": 22,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_16_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 746,
+                    "geplantes_Ende": 768
+                },
+                {
+                    "Name": "Job_16_Op3",
+                    "benötigteZeit": 40,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_16_Op2"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "zwischenlager": {
+                        "minVerweildauer": 19,
+                        "lagerkosten": 2
+                    },
+                    "geplanter_Start": 768,
+                    "geplantes_Ende": 808
+                },
+                {
+                    "Name": "Job_16_Op4",
+                    "benötigteZeit": 36,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_16_Op3"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 808,
+                    "geplantes_Ende": 844
+                },
+                {
+                    "Name": "Job_16_Op5",
+                    "benötigteZeit": 54,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_16_Op4"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 844,
+                    "geplantes_Ende": 898
+                }
+            ]
+        },
+        {
+            "Name": "Job_17",
+            "Priorität": 2,
+            "Operationen": [
+                {
+                    "Name": "Job_17_Op1",
+                    "benötigteZeit": 27,
+                    "Maschine": "M3",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Öl"
+                    ],
+                    "umruestkosten": 32,
+                    "zwischenlager": {
+                        "minVerweildauer": 12,
+                        "lagerkosten": 2
+                    },
+                    "geplanter_Start": 852,
+                    "geplantes_Ende": 911
+                },
+                {
+                    "Name": "Job_17_Op2",
+                    "benötigteZeit": 46,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_17_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "zwischenlager": {
+                        "minVerweildauer": 19,
+                        "lagerkosten": 3
+                    },
+                    "geplanter_Start": 911,
+                    "geplantes_Ende": 957
+                },
+                {
+                    "Name": "Job_17_Op3",
+                    "benötigteZeit": 45,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_17_Op2",
+                        "Job_17_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Öl"
+                    ],
+                    "umruestkosten": 24,
+                    "geplanter_Start": 957,
+                    "geplantes_Ende": 1026
+                }
+            ]
+        },
+        {
+            "Name": "Job_18",
+            "Priorität": 7,
+            "Operationen": [
+                {
+                    "Name": "Job_18_Op1",
+                    "benötigteZeit": 52,
+                    "Maschine": "M3",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 911,
+                    "geplantes_Ende": 963
+                },
+                {
+                    "Name": "Job_18_Op2",
+                    "benötigteZeit": 39,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_18_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Öl"
+                    ],
+                    "umruestkosten": 25,
+                    "geplanter_Start": 963,
+                    "geplantes_Ende": 1027
+                },
+                {
+                    "Name": "Job_18_Op3",
+                    "benötigteZeit": 24,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_18_Op2"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 1027,
+                    "geplantes_Ende": 1051
+                }
+            ]
+        },
+        {
+            "Name": "Job_19",
+            "Priorität": 9,
+            "Operationen": [
+                {
+                    "Name": "Job_19_Op1",
+                    "benötigteZeit": 45,
+                    "Maschine": "M2",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "zwischenlager": {
+                        "minVerweildauer": 11,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 1027,
+                    "geplantes_Ende": 1072
+                },
+                {
+                    "Name": "Job_19_Op2",
+                    "benötigteZeit": 34,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_19_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "zwischenlager": {
+                        "minVerweildauer": 13,
+                        "lagerkosten": 1
+                    },
+                    "geplanter_Start": 1072,
+                    "geplantes_Ende": 1106
+                },
+                {
+                    "Name": "Job_19_Op3",
+                    "benötigteZeit": 49,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_19_Op2"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 1106,
+                    "geplantes_Ende": 1155
+                },
+                {
+                    "Name": "Job_19_Op4",
+                    "benötigteZeit": 58,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_19_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 1155,
+                    "geplantes_Ende": 1213
+                }
+            ]
+        },
+        {
+            "Name": "Job_2",
+            "Priorität": 9,
+            "Operationen": [
+                {
+                    "Name": "Job_2_Op1",
+                    "benötigteZeit": 33,
+                    "Maschine": "M2",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 1155,
+                    "geplantes_Ende": 1188
+                }
+            ]
+        },
+        {
+            "Name": "Job_20",
+            "Priorität": 1,
+            "Operationen": [
+                {
+                    "Name": "Job_20_Op1",
+                    "benötigteZeit": 30,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 34,
+                    "geplanter_Start": 1051,
+                    "geplantes_Ende": 1115
+                },
+                {
+                    "Name": "Job_20_Op2",
+                    "benötigteZeit": 51,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_20_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 1188,
+                    "geplantes_Ende": 1239
+                },
+                {
+                    "Name": "Job_20_Op3",
+                    "benötigteZeit": 35,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_20_Op2"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel",
+                        "Schablone",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 17,
+                    "geplanter_Start": 1239,
+                    "geplantes_Ende": 1291
+                },
+                {
+                    "Name": "Job_20_Op4",
+                    "benötigteZeit": 29,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_20_Op3"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 1291,
+                    "geplantes_Ende": 1320
+                }
+            ]
+        },
+        {
+            "Name": "Job_21",
+            "Priorität": 10,
+            "Operationen": [
+                {
+                    "Name": "Job_21_Op1",
+                    "benötigteZeit": 46,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "zwischenlager": {
+                        "minVerweildauer": 19,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 1115,
+                    "geplantes_Ende": 1161
+                },
+                {
+                    "Name": "Job_21_Op2",
+                    "benötigteZeit": 50,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_21_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 33,
+                    "geplanter_Start": 1161,
+                    "geplantes_Ende": 1244
+                }
+            ]
+        },
+        {
+            "Name": "Job_22",
+            "Priorität": 7,
+            "Operationen": [
+                {
+                    "Name": "Job_22_Op1",
+                    "benötigteZeit": 51,
+                    "Maschine": "M2",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "zwischenlager": {
+                        "minVerweildauer": 15,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 1320,
+                    "geplantes_Ende": 1371
+                },
+                {
+                    "Name": "Job_22_Op2",
+                    "benötigteZeit": 30,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_22_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 1371,
+                    "geplantes_Ende": 1401
+                }
+            ]
+        },
+        {
+            "Name": "Job_23",
+            "Priorität": 3,
+            "Operationen": [
+                {
+                    "Name": "Job_23_Op1",
+                    "benötigteZeit": 56,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "zwischenlager": {
+                        "minVerweildauer": 17,
+                        "lagerkosten": 2
+                    },
+                    "geplanter_Start": 1244,
+                    "geplantes_Ende": 1300
+                },
+                {
+                    "Name": "Job_23_Op2",
+                    "benötigteZeit": 23,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_23_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Öl"
+                    ],
+                    "umruestkosten": 34,
+                    "geplanter_Start": 1300,
+                    "geplantes_Ende": 1357
+                },
+                {
+                    "Name": "Job_23_Op3",
+                    "benötigteZeit": 37,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_23_Op2"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 1401,
+                    "geplantes_Ende": 1438
+                },
+                {
+                    "Name": "Job_23_Op4",
+                    "benötigteZeit": 54,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_23_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 34,
+                    "zwischenlager": {
+                        "minVerweildauer": 13,
+                        "lagerkosten": 2
+                    },
+                    "geplanter_Start": 1438,
+                    "geplantes_Ende": 1526
+                },
+                {
+                    "Name": "Job_23_Op5",
+                    "benötigteZeit": 21,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_23_Op4"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel",
+                        "Werkzeug",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 24,
+                    "geplanter_Start": 1526,
+                    "geplantes_Ende": 1571
+                }
+            ]
+        },
+        {
+            "Name": "Job_24",
+            "Priorität": 10,
+            "Operationen": [
+                {
+                    "Name": "Job_24_Op1",
+                    "benötigteZeit": 58,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "zwischenlager": {
+                        "minVerweildauer": 10,
+                        "lagerkosten": 3
+                    },
+                    "geplanter_Start": 1526,
+                    "geplantes_Ende": 1584
+                },
+                {
+                    "Name": "Job_24_Op2",
+                    "benötigteZeit": 56,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_24_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "zwischenlager": {
+                        "minVerweildauer": 19,
+                        "lagerkosten": 2
+                    },
+                    "geplanter_Start": 1584,
+                    "geplantes_Ende": 1640
+                },
+                {
+                    "Name": "Job_24_Op3",
+                    "benötigteZeit": 26,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_24_Op2",
+                        "Job_24_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "zwischenlager": {
+                        "minVerweildauer": 19,
+                        "lagerkosten": 1
+                    },
+                    "geplanter_Start": 1640,
+                    "geplantes_Ende": 1666
+                },
+                {
+                    "Name": "Job_24_Op4",
+                    "benötigteZeit": 42,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_24_Op3"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Kühlmittel",
+                        "Öl"
+                    ],
+                    "umruestkosten": 36,
+                    "geplanter_Start": 1666,
+                    "geplantes_Ende": 1744
+                },
+                {
+                    "Name": "Job_24_Op5",
+                    "benötigteZeit": 47,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_24_Op4"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 1744,
+                    "geplantes_Ende": 1791
+                }
+            ]
+        },
+        {
+            "Name": "Job_25",
+            "Priorität": 4,
+            "Operationen": [
+                {
+                    "Name": "Job_25_Op1",
+                    "benötigteZeit": 50,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 1744,
+                    "geplantes_Ende": 1794
+                },
+                {
+                    "Name": "Job_25_Op2",
+                    "benötigteZeit": 40,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_25_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 28,
+                    "geplanter_Start": 1794,
+                    "geplantes_Ende": 1862
+                },
+                {
+                    "Name": "Job_25_Op3",
+                    "benötigteZeit": 44,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_25_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 1862,
+                    "geplantes_Ende": 1906
+                },
+                {
+                    "Name": "Job_25_Op4",
+                    "benötigteZeit": 51,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_25_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 1906,
+                    "geplantes_Ende": 1957
+                },
+                {
+                    "Name": "Job_25_Op5",
+                    "benötigteZeit": 58,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_25_Op4"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 17,
+                    "geplanter_Start": 1957,
+                    "geplantes_Ende": 2032
+                }
+            ]
+        },
+        {
+            "Name": "Job_26",
+            "Priorität": 9,
+            "Operationen": [
+                {
+                    "Name": "Job_26_Op1",
+                    "benötigteZeit": 51,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Schablone"
+                    ],
+                    "umruestkosten": 32,
+                    "zwischenlager": {
+                        "minVerweildauer": 20,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 1794,
+                    "geplantes_Ende": 1877
+                },
+                {
+                    "Name": "Job_26_Op2",
+                    "benötigteZeit": 43,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_26_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 1877,
+                    "geplantes_Ende": 1920
+                },
+                {
+                    "Name": "Job_26_Op3",
+                    "benötigteZeit": 55,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_26_Op2"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "zwischenlager": {
+                        "minVerweildauer": 14,
+                        "lagerkosten": 2
+                    },
+                    "geplanter_Start": 2032,
+                    "geplantes_Ende": 2087
+                },
+                {
+                    "Name": "Job_26_Op4",
+                    "benötigteZeit": 27,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_26_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Kühlmittel",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 33,
+                    "geplanter_Start": 2087,
+                    "geplantes_Ende": 2147
+                }
+            ]
+        },
+        {
+            "Name": "Job_27",
+            "Priorität": 3,
+            "Operationen": [
+                {
+                    "Name": "Job_27_Op1",
+                    "benötigteZeit": 38,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 10,
+                    "geplanter_Start": 1584,
+                    "geplantes_Ende": 1632
+                },
+                {
+                    "Name": "Job_27_Op2",
+                    "benötigteZeit": 28,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_27_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 2087,
+                    "geplantes_Ende": 2115
+                },
+                {
+                    "Name": "Job_27_Op3",
+                    "benötigteZeit": 28,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_27_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 2115,
+                    "geplantes_Ende": 2143
+                },
+                {
+                    "Name": "Job_27_Op4",
+                    "benötigteZeit": 50,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_27_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 40,
+                    "geplanter_Start": 2143,
+                    "geplantes_Ende": 2233
+                },
+                {
+                    "Name": "Job_27_Op5",
+                    "benötigteZeit": 27,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_27_Op4"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 2233,
+                    "geplantes_Ende": 2260
+                }
+            ]
+        },
+        {
+            "Name": "Job_28",
+            "Priorität": 10,
+            "Operationen": [
+                {
+                    "Name": "Job_28_Op1",
+                    "benötigteZeit": 56,
+                    "Maschine": "M3",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "zwischenlager": {
+                        "minVerweildauer": 16,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 2115,
+                    "geplantes_Ende": 2171
+                },
+                {
+                    "Name": "Job_28_Op2",
+                    "benötigteZeit": 58,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_28_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 23,
+                    "geplanter_Start": 2171,
+                    "geplantes_Ende": 2252
+                }
+            ]
+        },
+        {
+            "Name": "Job_29",
+            "Priorität": 4,
+            "Operationen": [
+                {
+                    "Name": "Job_29_Op1",
+                    "benötigteZeit": 59,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "zwischenlager": {
+                        "minVerweildauer": 11,
+                        "lagerkosten": 2
+                    },
+                    "geplanter_Start": 2260,
+                    "geplantes_Ende": 2319
+                }
+            ]
+        },
+        {
+            "Name": "Job_3",
+            "Priorität": 6,
+            "Operationen": [
+                {
+                    "Name": "Job_3_Op1",
+                    "benötigteZeit": 34,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Öl"
+                    ],
+                    "umruestkosten": 32,
+                    "geplanter_Start": 2233,
+                    "geplantes_Ende": 2299
+                },
+                {
+                    "Name": "Job_3_Op2",
+                    "benötigteZeit": 37,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_3_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 2299,
+                    "geplantes_Ende": 2336
+                },
+                {
+                    "Name": "Job_3_Op3",
+                    "benötigteZeit": 25,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_3_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 33,
+                    "geplanter_Start": 2336,
+                    "geplantes_Ende": 2394
+                },
+                {
+                    "Name": "Job_3_Op4",
+                    "benötigteZeit": 27,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_3_Op3"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 2394,
+                    "geplantes_Ende": 2421
+                }
+            ]
+        },
+        {
+            "Name": "Job_30",
+            "Priorität": 4,
+            "Operationen": [
+                {
+                    "Name": "Job_30_Op1",
+                    "benötigteZeit": 55,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Öl"
+                    ],
+                    "umruestkosten": 11,
+                    "zwischenlager": {
+                        "minVerweildauer": 14,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 2319,
+                    "geplantes_Ende": 2385
+                },
+                {
+                    "Name": "Job_30_Op2",
+                    "benötigteZeit": 24,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_30_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 2385,
+                    "geplantes_Ende": 2409
+                }
+            ]
+        },
+        {
+            "Name": "Job_31",
+            "Priorität": 3,
+            "Operationen": [
+                {
+                    "Name": "Job_31_Op1",
+                    "benötigteZeit": 27,
+                    "Maschine": "M2",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 11,
+                    "zwischenlager": {
+                        "minVerweildauer": 14,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 2409,
+                    "geplantes_Ende": 2447
+                },
+                {
+                    "Name": "Job_31_Op2",
+                    "benötigteZeit": 56,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_31_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Schablone",
+                        "Öl"
+                    ],
+                    "umruestkosten": 40,
+                    "zwischenlager": {
+                        "minVerweildauer": 18,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 2447,
+                    "geplantes_Ende": 2543
+                },
+                {
+                    "Name": "Job_31_Op3",
+                    "benötigteZeit": 48,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_31_Op2"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 18,
+                    "zwischenlager": {
+                        "minVerweildauer": 13,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 2543,
+                    "geplantes_Ende": 2609
+                },
+                {
+                    "Name": "Job_31_Op4",
+                    "benötigteZeit": 57,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_31_Op3"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 2609,
+                    "geplantes_Ende": 2666
+                }
+            ]
+        },
+        {
+            "Name": "Job_32",
+            "Priorität": 1,
+            "Operationen": [
+                {
+                    "Name": "Job_32_Op1",
+                    "benötigteZeit": 53,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Werkzeug",
+                        "Öl"
+                    ],
+                    "umruestkosten": 12,
+                    "geplanter_Start": 2421,
+                    "geplantes_Ende": 2486
+                },
+                {
+                    "Name": "Job_32_Op2",
+                    "benötigteZeit": 46,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_32_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 2543,
+                    "geplantes_Ende": 2589
+                },
+                {
+                    "Name": "Job_32_Op3",
+                    "benötigteZeit": 41,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_32_Op2"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 2589,
+                    "geplantes_Ende": 2630
+                },
+                {
+                    "Name": "Job_32_Op4",
+                    "benötigteZeit": 45,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_32_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 34,
+                    "geplanter_Start": 2666,
+                    "geplantes_Ende": 2745
+                }
+            ]
+        },
+        {
+            "Name": "Job_33",
+            "Priorität": 7,
+            "Operationen": [
+                {
+                    "Name": "Job_33_Op1",
+                    "benötigteZeit": 49,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 24,
+                    "geplanter_Start": 2630,
+                    "geplantes_Ende": 2703
+                },
+                {
+                    "Name": "Job_33_Op2",
+                    "benötigteZeit": 33,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_33_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 25,
+                    "zwischenlager": {
+                        "minVerweildauer": 20,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 2703,
+                    "geplantes_Ende": 2761
+                },
+                {
+                    "Name": "Job_33_Op3",
+                    "benötigteZeit": 35,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_33_Op2"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 2761,
+                    "geplantes_Ende": 2796
+                },
+                {
+                    "Name": "Job_33_Op4",
+                    "benötigteZeit": 25,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_33_Op3"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "zwischenlager": {
+                        "minVerweildauer": 12,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 2796,
+                    "geplantes_Ende": 2821
+                },
+                {
+                    "Name": "Job_33_Op5",
+                    "benötigteZeit": 38,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_33_Op4",
+                        "Job_33_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 2821,
+                    "geplantes_Ende": 2859
+                }
+            ]
+        },
+        {
+            "Name": "Job_34",
+            "Priorität": 3,
+            "Operationen": [
+                {
+                    "Name": "Job_34_Op1",
+                    "benötigteZeit": 58,
+                    "Maschine": "M2",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 18,
+                    "geplanter_Start": 2821,
+                    "geplantes_Ende": 2897
+                },
+                {
+                    "Name": "Job_34_Op2",
+                    "benötigteZeit": 38,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_34_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 2897,
+                    "geplantes_Ende": 2935
+                }
+            ]
+        },
+        {
+            "Name": "Job_35",
+            "Priorität": 7,
+            "Operationen": [
+                {
+                    "Name": "Job_35_Op1",
+                    "benötigteZeit": 54,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Öl",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 37,
+                    "zwischenlager": {
+                        "minVerweildauer": 13,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 2703,
+                    "geplantes_Ende": 2794
+                },
+                {
+                    "Name": "Job_35_Op2",
+                    "benötigteZeit": 44,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_35_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Werkzeug",
+                        "Öl"
+                    ],
+                    "umruestkosten": 22,
+                    "geplanter_Start": 2897,
+                    "geplantes_Ende": 2963
+                },
+                {
+                    "Name": "Job_35_Op3",
+                    "benötigteZeit": 29,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_35_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Kühlmittel",
+                        "Öl"
+                    ],
+                    "umruestkosten": 13,
+                    "geplanter_Start": 2963,
+                    "geplantes_Ende": 3005
+                },
+                {
+                    "Name": "Job_35_Op4",
+                    "benötigteZeit": 49,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_35_Op3"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Kühlmittel",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 35,
+                    "geplanter_Start": 3005,
+                    "geplantes_Ende": 3089
+                }
+            ]
+        },
+        {
+            "Name": "Job_36",
+            "Priorität": 8,
+            "Operationen": [
+                {
+                    "Name": "Job_36_Op1",
+                    "benötigteZeit": 41,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 3005,
+                    "geplantes_Ende": 3046
+                }
+            ]
+        },
+        {
+            "Name": "Job_37",
+            "Priorität": 8,
+            "Operationen": [
+                {
+                    "Name": "Job_37_Op1",
+                    "benötigteZeit": 22,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 3089,
+                    "geplantes_Ende": 3111
+                },
+                {
+                    "Name": "Job_37_Op2",
+                    "benötigteZeit": 34,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_37_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 3111,
+                    "geplantes_Ende": 3145
+                },
+                {
+                    "Name": "Job_37_Op3",
+                    "benötigteZeit": 26,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_37_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 3145,
+                    "geplantes_Ende": 3171
+                },
+                {
+                    "Name": "Job_37_Op4",
+                    "benötigteZeit": 22,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_37_Op3",
+                        "Job_37_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 17,
+                    "geplanter_Start": 3171,
+                    "geplantes_Ende": 3210
+                },
+                {
+                    "Name": "Job_37_Op5",
+                    "benötigteZeit": 56,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_37_Op4"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Werkzeug",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 25,
+                    "geplanter_Start": 3210,
+                    "geplantes_Ende": 3291
+                }
+            ]
+        },
+        {
+            "Name": "Job_38",
+            "Priorität": 10,
+            "Operationen": [
+                {
+                    "Name": "Job_38_Op1",
+                    "benötigteZeit": 20,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "zwischenlager": {
+                        "minVerweildauer": 17,
+                        "lagerkosten": 3
+                    },
+                    "geplanter_Start": 3171,
+                    "geplantes_Ende": 3191
+                },
+                {
+                    "Name": "Job_38_Op2",
+                    "benötigteZeit": 57,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_38_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 3210,
+                    "geplantes_Ende": 3267
+                },
+                {
+                    "Name": "Job_38_Op3",
+                    "benötigteZeit": 49,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_38_Op2",
+                        "Job_38_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 3267,
+                    "geplantes_Ende": 3316
+                }
+            ]
+        },
+        {
+            "Name": "Job_39",
+            "Priorität": 10,
+            "Operationen": [
+                {
+                    "Name": "Job_39_Op1",
+                    "benötigteZeit": 38,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 39,
+                    "geplanter_Start": 3145,
+                    "geplantes_Ende": 3222
+                },
+                {
+                    "Name": "Job_39_Op2",
+                    "benötigteZeit": 51,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_39_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 3316,
+                    "geplantes_Ende": 3367
+                },
+                {
+                    "Name": "Job_39_Op3",
+                    "benötigteZeit": 60,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_39_Op2",
+                        "Job_39_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Werkzeug",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 38,
+                    "geplanter_Start": 3367,
+                    "geplantes_Ende": 3465
+                }
+            ]
+        },
+        {
+            "Name": "Job_4",
+            "Priorität": 6,
+            "Operationen": [
+                {
+                    "Name": "Job_4_Op1",
+                    "benötigteZeit": 32,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 3222,
+                    "geplantes_Ende": 3254
+                },
+                {
+                    "Name": "Job_4_Op2",
+                    "benötigteZeit": 25,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_4_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 21,
+                    "geplanter_Start": 3465,
+                    "geplantes_Ende": 3511
+                },
+                {
+                    "Name": "Job_4_Op3",
+                    "benötigteZeit": 37,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_4_Op2"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 3511,
+                    "geplantes_Ende": 3548
+                },
+                {
+                    "Name": "Job_4_Op4",
+                    "benötigteZeit": 35,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_4_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Werkzeug",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 36,
+                    "geplanter_Start": 3548,
+                    "geplantes_Ende": 3619
+                },
+                {
+                    "Name": "Job_4_Op5",
+                    "benötigteZeit": 23,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_4_Op4",
+                        "Job_4_Op3"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 3619,
+                    "geplantes_Ende": 3642
+                }
+            ]
+        },
+        {
+            "Name": "Job_40",
+            "Priorität": 2,
+            "Operationen": [
+                {
+                    "Name": "Job_40_Op1",
+                    "benötigteZeit": 28,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 14,
+                    "geplanter_Start": 3548,
+                    "geplantes_Ende": 3590
+                },
+                {
+                    "Name": "Job_40_Op2",
+                    "benötigteZeit": 43,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_40_Op1"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 37,
+                    "geplanter_Start": 3590,
+                    "geplantes_Ende": 3670
+                },
+                {
+                    "Name": "Job_40_Op3",
+                    "benötigteZeit": 27,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_40_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Schablone"
+                    ],
+                    "umruestkosten": 40,
+                    "geplanter_Start": 3670,
+                    "geplantes_Ende": 3737
+                }
+            ]
+        },
+        {
+            "Name": "Job_41",
+            "Priorität": 9,
+            "Operationen": [
+                {
+                    "Name": "Job_41_Op1",
+                    "benötigteZeit": 20,
+                    "Maschine": "M3",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 22,
+                    "geplanter_Start": 3670,
+                    "geplantes_Ende": 3712
+                },
+                {
+                    "Name": "Job_41_Op2",
+                    "benötigteZeit": 43,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_41_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 39,
+                    "geplanter_Start": 3712,
+                    "geplantes_Ende": 3794
+                },
+                {
+                    "Name": "Job_41_Op3",
+                    "benötigteZeit": 24,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_41_Op2"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 11,
+                    "geplanter_Start": 3794,
+                    "geplantes_Ende": 3829
+                },
+                {
+                    "Name": "Job_41_Op4",
+                    "benötigteZeit": 39,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_41_Op3"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Schablone",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 21,
+                    "geplanter_Start": 3829,
+                    "geplantes_Ende": 3889
+                }
+            ]
+        },
+        {
+            "Name": "Job_42",
+            "Priorität": 3,
+            "Operationen": [
+                {
+                    "Name": "Job_42_Op1",
+                    "benötigteZeit": 57,
+                    "Maschine": "M2",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 3642,
+                    "geplantes_Ende": 3699
+                },
+                {
+                    "Name": "Job_42_Op2",
+                    "benötigteZeit": 59,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_42_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 24,
+                    "geplanter_Start": 3889,
+                    "geplantes_Ende": 3972
+                },
+                {
+                    "Name": "Job_42_Op3",
+                    "benötigteZeit": 43,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_42_Op2"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Kühlmittel",
+                        "Öl"
+                    ],
+                    "umruestkosten": 18,
+                    "zwischenlager": {
+                        "minVerweildauer": 11,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 3972,
+                    "geplantes_Ende": 4033
+                },
+                {
+                    "Name": "Job_42_Op4",
+                    "benötigteZeit": 25,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_42_Op3",
+                        "Job_42_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 4033,
+                    "geplantes_Ende": 4058
+                }
+            ]
+        },
+        {
+            "Name": "Job_43",
+            "Priorität": 8,
+            "Operationen": [
+                {
+                    "Name": "Job_43_Op1",
+                    "benötigteZeit": 33,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Öl"
+                    ],
+                    "umruestkosten": 20,
+                    "geplanter_Start": 4033,
+                    "geplantes_Ende": 4086
+                },
+                {
+                    "Name": "Job_43_Op2",
+                    "benötigteZeit": 58,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_43_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "zwischenlager": {
+                        "minVerweildauer": 12,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 4086,
+                    "geplantes_Ende": 4144
+                },
+                {
+                    "Name": "Job_43_Op3",
+                    "benötigteZeit": 36,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_43_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "zwischenlager": {
+                        "minVerweildauer": 10,
+                        "lagerkosten": 3
+                    },
+                    "geplanter_Start": 4144,
+                    "geplantes_Ende": 4180
+                },
+                {
+                    "Name": "Job_43_Op4",
+                    "benötigteZeit": 35,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_43_Op3"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Öl"
+                    ],
+                    "umruestkosten": 33,
+                    "geplanter_Start": 4180,
+                    "geplantes_Ende": 4248
+                },
+                {
+                    "Name": "Job_43_Op5",
+                    "benötigteZeit": 27,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_43_Op4"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 4248,
+                    "geplantes_Ende": 4275
+                }
+            ]
+        },
+        {
+            "Name": "Job_44",
+            "Priorität": 10,
+            "Operationen": [
+                {
+                    "Name": "Job_44_Op1",
+                    "benötigteZeit": 34,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 4275,
+                    "geplantes_Ende": 4309
+                },
+                {
+                    "Name": "Job_44_Op2",
+                    "benötigteZeit": 53,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_44_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "zwischenlager": {
+                        "minVerweildauer": 17,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 4309,
+                    "geplantes_Ende": 4362
+                },
+                {
+                    "Name": "Job_44_Op3",
+                    "benötigteZeit": 47,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_44_Op2"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 4362,
+                    "geplantes_Ende": 4409
+                },
+                {
+                    "Name": "Job_44_Op4",
+                    "benötigteZeit": 25,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_44_Op3"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 29,
+                    "geplanter_Start": 4409,
+                    "geplantes_Ende": 4463
+                },
+                {
+                    "Name": "Job_44_Op5",
+                    "benötigteZeit": 55,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_44_Op4"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 4463,
+                    "geplantes_Ende": 4518
+                }
+            ]
+        },
+        {
+            "Name": "Job_45",
+            "Priorität": 2,
+            "Operationen": [
+                {
+                    "Name": "Job_45_Op1",
+                    "benötigteZeit": 26,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 4409,
+                    "geplantes_Ende": 4435
+                },
+                {
+                    "Name": "Job_45_Op2",
+                    "benötigteZeit": 33,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_45_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 4435,
+                    "geplantes_Ende": 4468
+                },
+                {
+                    "Name": "Job_45_Op3",
+                    "benötigteZeit": 49,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_45_Op2"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 4468,
+                    "geplantes_Ende": 4517
+                },
+                {
+                    "Name": "Job_45_Op4",
+                    "benötigteZeit": 40,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_45_Op3"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 4518,
+                    "geplantes_Ende": 4558
+                }
+            ]
+        },
+        {
+            "Name": "Job_46",
+            "Priorität": 3,
+            "Operationen": [
+                {
+                    "Name": "Job_46_Op1",
+                    "benötigteZeit": 25,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 4517,
+                    "geplantes_Ende": 4542
+                }
+            ]
+        },
+        {
+            "Name": "Job_47",
+            "Priorität": 2,
+            "Operationen": [
+                {
+                    "Name": "Job_47_Op1",
+                    "benötigteZeit": 23,
+                    "Maschine": "M3",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 11,
+                    "geplanter_Start": 4558,
+                    "geplantes_Ende": 4592
+                },
+                {
+                    "Name": "Job_47_Op2",
+                    "benötigteZeit": 58,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_47_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Kühlmittel",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 17,
+                    "geplanter_Start": 4592,
+                    "geplantes_Ende": 4667
+                },
+                {
+                    "Name": "Job_47_Op3",
+                    "benötigteZeit": 42,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_47_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 4667,
+                    "geplantes_Ende": 4709
+                },
+                {
+                    "Name": "Job_47_Op4",
+                    "benötigteZeit": 47,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_47_Op3"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 4709,
+                    "geplantes_Ende": 4756
+                },
+                {
+                    "Name": "Job_47_Op5",
+                    "benötigteZeit": 37,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_47_Op4"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Öl"
+                    ],
+                    "umruestkosten": 10,
+                    "zwischenlager": {
+                        "minVerweildauer": 12,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 4756,
+                    "geplantes_Ende": 4803
+                }
+            ]
+        },
+        {
+            "Name": "Job_48",
+            "Priorität": 2,
+            "Operationen": [
+                {
+                    "Name": "Job_48_Op1",
+                    "benötigteZeit": 60,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "zwischenlager": {
+                        "minVerweildauer": 16,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 4803,
+                    "geplantes_Ende": 4863
+                },
+                {
+                    "Name": "Job_48_Op2",
+                    "benötigteZeit": 41,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_48_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 14,
+                    "zwischenlager": {
+                        "minVerweildauer": 19,
+                        "lagerkosten": 1
+                    },
+                    "geplanter_Start": 4863,
+                    "geplantes_Ende": 4918
+                }
+            ]
+        },
+        {
+            "Name": "Job_49",
+            "Priorität": 5,
+            "Operationen": [
+                {
+                    "Name": "Job_49_Op1",
+                    "benötigteZeit": 48,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_B",
+                    "geplanter_Start": 4542,
+                    "geplantes_Ende": 4590
+                },
+                {
+                    "Name": "Job_49_Op2",
+                    "benötigteZeit": 33,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_49_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "zwischenlager": {
+                        "minVerweildauer": 20,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 4863,
+                    "geplantes_Ende": 4896
+                },
+                {
+                    "Name": "Job_49_Op3",
+                    "benötigteZeit": 51,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_49_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel",
+                        "Schablone",
+                        "Werkzeug"
+                    ],
+                    "umruestkosten": 19,
+                    "geplanter_Start": 4896,
+                    "geplantes_Ende": 4966
+                }
+            ]
+        },
+        {
+            "Name": "Job_5",
+            "Priorität": 7,
+            "Operationen": [
+                {
+                    "Name": "Job_5_Op1",
+                    "benötigteZeit": 51,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "zwischenlager": {
+                        "minVerweildauer": 13,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 4590,
+                    "geplantes_Ende": 4641
+                },
+                {
+                    "Name": "Job_5_Op2",
+                    "benötigteZeit": 54,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_5_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 4966,
+                    "geplantes_Ende": 5020
+                }
+            ]
+        },
+        {
+            "Name": "Job_50",
+            "Priorität": 6,
+            "Operationen": [
+                {
+                    "Name": "Job_50_Op1",
+                    "benötigteZeit": 40,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 4896,
+                    "geplantes_Ende": 4936
+                },
+                {
+                    "Name": "Job_50_Op2",
+                    "benötigteZeit": 28,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_50_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 4936,
+                    "geplantes_Ende": 4964
+                },
+                {
+                    "Name": "Job_50_Op3",
+                    "benötigteZeit": 42,
+                    "Maschine": "M1",
+                    "Vorgänger": [
+                        "Job_50_Op2"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "zwischenlager": {
+                        "minVerweildauer": 10,
+                        "lagerkosten": 4
+                    },
+                    "geplanter_Start": 4964,
+                    "geplantes_Ende": 5006
+                }
+            ]
+        },
+        {
+            "Name": "Job_6",
+            "Priorität": 6,
+            "Operationen": [
+                {
+                    "Name": "Job_6_Op1",
+                    "benötigteZeit": 34,
+                    "Maschine": "M2",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 4918,
+                    "geplantes_Ende": 4952
+                },
+                {
+                    "Name": "Job_6_Op2",
+                    "benötigteZeit": 27,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_6_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Schablone",
+                        "Werkzeug",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 22,
+                    "geplanter_Start": 4952,
+                    "geplantes_Ende": 5001
+                },
+                {
+                    "Name": "Job_6_Op3",
+                    "benötigteZeit": 49,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_6_Op2"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "zwischenlager": {
+                        "minVerweildauer": 11,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 5020,
+                    "geplantes_Ende": 5069
+                }
+            ]
+        },
+        {
+            "Name": "Job_7",
+            "Priorität": 5,
+            "Operationen": [
+                {
+                    "Name": "Job_7_Op1",
+                    "benötigteZeit": 38,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 4964,
+                    "geplantes_Ende": 5002
+                }
+            ]
+        },
+        {
+            "Name": "Job_8",
+            "Priorität": 5,
+            "Operationen": [
+                {
+                    "Name": "Job_8_Op1",
+                    "benötigteZeit": 31,
+                    "Maschine": "M1",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Öl",
+                        "Kühlmittel",
+                        "Schablone"
+                    ],
+                    "umruestkosten": 34,
+                    "zwischenlager": {
+                        "minVerweildauer": 18,
+                        "lagerkosten": 1
+                    },
+                    "geplanter_Start": 5006,
+                    "geplantes_Ende": 5071
+                },
+                {
+                    "Name": "Job_8_Op2",
+                    "benötigteZeit": 58,
+                    "Maschine": "M3",
+                    "Vorgänger": [
+                        "Job_8_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "benötigteHilfsmittel": [
+                        "Werkzeug",
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 11,
+                    "zwischenlager": {
+                        "minVerweildauer": 19,
+                        "lagerkosten": 1
+                    },
+                    "geplanter_Start": 5071,
+                    "geplantes_Ende": 5140
+                },
+                {
+                    "Name": "Job_8_Op3",
+                    "benötigteZeit": 25,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_8_Op2"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 5140,
+                    "geplantes_Ende": 5165
+                },
+                {
+                    "Name": "Job_8_Op4",
+                    "benötigteZeit": 28,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_8_Op3"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "geplanter_Start": 5165,
+                    "geplantes_Ende": 5193
+                },
+                {
+                    "Name": "Job_8_Op5",
+                    "benötigteZeit": 36,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_8_Op4"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 5193,
+                    "geplantes_Ende": 5229
+                }
+            ]
+        },
+        {
+            "Name": "Job_9",
+            "Priorität": 6,
+            "Operationen": [
+                {
+                    "Name": "Job_9_Op1",
+                    "benötigteZeit": 43,
+                    "Maschine": "M4",
+                    "Vorgänger": null,
+                    "produziertesMaterial": "Material_C",
+                    "zwischenlager": {
+                        "minVerweildauer": 11,
+                        "lagerkosten": 3
+                    },
+                    "geplanter_Start": 5229,
+                    "geplantes_Ende": 5272
+                },
+                {
+                    "Name": "Job_9_Op2",
+                    "benötigteZeit": 21,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_9_Op1"
+                    ],
+                    "produziertesMaterial": "Material_C",
+                    "benötigteHilfsmittel": [
+                        "Kühlmittel"
+                    ],
+                    "umruestkosten": 17,
+                    "zwischenlager": {
+                        "minVerweildauer": 10,
+                        "lagerkosten": 3
+                    },
+                    "geplanter_Start": 5272,
+                    "geplantes_Ende": 5310
+                },
+                {
+                    "Name": "Job_9_Op3",
+                    "benötigteZeit": 24,
+                    "Maschine": "M2",
+                    "Vorgänger": [
+                        "Job_9_Op2",
+                        "Job_9_Op1"
+                    ],
+                    "produziertesMaterial": "Material_B",
+                    "zwischenlager": {
+                        "minVerweildauer": 12,
+                        "lagerkosten": 5
+                    },
+                    "geplanter_Start": 5310,
+                    "geplantes_Ende": 5334
+                },
+                {
+                    "Name": "Job_9_Op4",
+                    "benötigteZeit": 56,
+                    "Maschine": "M4",
+                    "Vorgänger": [
+                        "Job_9_Op3"
+                    ],
+                    "produziertesMaterial": "Material_A",
+                    "geplanter_Start": 5334,
+                    "geplantes_Ende": 5390
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "timestamp": "20250306_213335",
+    "n_jobs": 50,
+    "makespan": 28,
+    "config": {
+        "gamma": 0.99,
+        "policy_clip": 0.1,
+        "n_epochs": 8,
+        "gae_lambda": 0.95,
+        "batch_size": 64,
+        "lr": 0.0003,
+        "entropy_coef": 0.01,
+        "d_model": 256,
+        "nhead": 8,
+        "num_layers": 3,
+        "dim_feedforward": 1024,
+        "n_episodes": 1000,
+        "max_steps": 300,
+        "update_interval": 20,
+        "eval_interval": 25,
+        "save_interval": 50
+    }
+}

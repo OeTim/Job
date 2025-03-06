@@ -27,6 +27,7 @@ class JobSchedulingEnv(gym.Env):
             'machine_status': spaces.Box(low=0, high=1, shape=(self.n_machines, 3), dtype=np.float32),
             'time_features': spaces.Box(low=0, high=1, shape=(3,), dtype=np.float32)
         })
+
         self.total_operations = sum(len(job["Operationen"]) for job in self.jobs)
         
         # Aktionen: Job-Auswahl für die nächste Ausführung

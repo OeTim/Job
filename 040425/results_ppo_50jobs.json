@@ -1,0 +1,32 @@
+{
+    "evaluation_metrics": {
+        "makespan": {
+            "mean": 5727.0,
+            "std": 0.0,
+            "min": 5727,
+            "max": 5727
+        },
+        "setup_time": {
+            "mean": 3279.0,
+            "std": 0.0
+        },
+        "completion_time": {
+            "mean": 3691.9,
+            "std": 0.0
+        },
+        "raw_makespans": [
+            5727
+        ]
+    },
+    "detailed_metrics": {
+        "makespan": 0,
+        "total_setup_time": 0,
+        "avg_completion_time": 0.0,
+        "max_completion_time": 0
+    },
+    "environment_info": {
+        "num_jobs": 50,
+        "num_machines": 4,
+        "data_file": "/Users/paulmill/Desktop/Georg August Universität/2025_PROJEKTSTUDIUM/jsp/040425/test_data_50jobs.json"
+    }
+}

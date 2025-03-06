@@ -1,0 +1,6 @@
+{
+    "scheduling_method": "PPO",
+    "makespan": 0,
+    "total_setup_time": 0,
+    "jobs": []
+}

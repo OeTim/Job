@@ -158,23 +158,31 @@ class JobSchedulingEnv(gym.Env):
                 break
         
         # Calculate rewards
-        operations_penalty = -100 * (remaining_ops / total_ops)
+        # Quadratische Skalierung für sanftere Bestrafung zu Beginn
+        operations_penalty = -50 * (remaining_ops / total_ops)**2
         
         efficiency_bonus = 0
         if processing_time > 0:
-            efficiency = 1.0 / (processing_time + changeover_time)
-            efficiency_bonus = efficiency * 20
+            # Begrenzte Effizienzbelohnung
+            avg_processing_time = sum(op['benötigteZeit'] for job in self.jobs for op in job['Operationen']) / total_ops
+            relative_efficiency = avg_processing_time / (processing_time + changeover_time)
+            efficiency_bonus = min(30, relative_efficiency * 25)
         
         utilization_bonus = 0
-        if self.current_time > 0:
-            utilization = sum(self.machine_availability.values()) / (self.n_machines * self.current_time)
-            utilization_bonus = utilization * 30
+        if end_time > 0:  # Verwende end_time statt self.current_time
+            total_machine_time = sum(max(0, avail - self.machine_availability.get(machine, 0)) 
+                                    for machine, avail in self.machine_availability.items())
+            utilization = total_machine_time / (self.n_machines * end_time)
+            utilization_bonus = min(40, utilization * 35)  # Begrenzung auf 40
         
-        progress_reward = (len(self.completed_jobs) / self.n_jobs) * 50
+        progress_reward = (len(self.completed_jobs) / self.n_jobs) * 60
         
-        changeover_penalty = -changeover_time / 5 if changeover_time > 0 else 0
+        # Stärkere Bestrafung für Umrüstzeiten
+        changeover_penalty = -changeover_time * 0.5 if changeover_time > 0 else 0
         
-        waiting_time_penalty = -(start_time - self.current_time) / 50
+        # Verbesserte Berechnung der Wartezeit
+        idle_time = start_time - max(machine_available, job_available)
+        waiting_time_penalty = -idle_time * 0.1 if idle_time > 0 else 0
         
         # Calculate final reward
         reward = (operations_penalty +
@@ -183,6 +191,16 @@ class JobSchedulingEnv(gym.Env):
                  progress_reward +
                  changeover_penalty +
                  waiting_time_penalty)
+        
+        # Belohnung für neu abgeschlossene Jobs in diesem Schritt
+        newly_completed = False
+        for job in self.completed_jobs:
+            if job['Name'] == job_name and all_completed:
+                newly_completed = True
+                break
+                
+        if newly_completed:
+            reward += 30  # Unmittelbare Belohnung für jeden neu abgeschlossenen Job
         
         # Add completion bonuses
         if completed_ops == total_ops:

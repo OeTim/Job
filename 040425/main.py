@@ -315,69 +315,59 @@ class JobSchedulingEnvironment:
                 )
                 if all_ops_completed:
                     self.completed_jobs.add(job_name)
+                # Vereinfachte Reward-Funktion mit Fokus auf Makespan-Minimierung
+        reward = -0.01  # Kleinere Basisstrafe pro Schritt, um lange Lösungswege zu vermeiden
         
-        # Verbesserte Reward-Funktion mit mehreren Komponenten
-        reward = -0.05  # Reduzierte Basisstrafe pro Schritt
-
         # 1. Belohne effiziente Maschinennutzung
-        # TODO: rausnehmen, nochmal überprüfen?
+        # Berechnung: Zähle Maschinen, deren Endzeit (machine_times) größer als die aktuelle Zeit ist
+        # Diese Maschinen sind aktuell mit Operationen belegt und daher "aktiv"
+        # Teile durch Gesamtzahl der Maschinen, um einen Wert zwischen 0 und 1 zu erhalten
+        # Höherer Wert = mehr Maschinen parallel aktiv = bessere Ressourcennutzung
         active_machines = sum(1 for m_time in self.machine_times.values() if m_time > self.current_time)
         machine_utilization = active_machines / len(self.machines) if self.machines else 0
-        reward += 0.1 * machine_utilization
-
-        # 2. Belohne Abschluss von Operationen (mehr für höhere Priorität)
-        # TODO: KEIN EINFLUSS HIER. Im nächsten Schritt berückstichtigen
-        reward += 0.2 * (op_data['priority'] / 10.0)
-
-        # 3. Belohne frühzeitige Fertigstellung (Operation wurde vor der durchschnittlichen Zeit fertiggestellt)
-        avg_completion_time = sum(self.machine_times.values()) / len(self.machines) if self.machines else 0
-        if end_time < avg_completion_time:
-            reward += 0.15
-
-        # 4. Belohne minimale Umrüstzeiten
-        # TODO: SINNVOLL? KEINE RÜSTZEIT POSTIVIER REWARD
-        # if setup_time < self.machine_setup_times[machine]['materialWechsel']:
-        #     reward += 0.1
-
-        # 5. Strafe für lange Wartezeiten bei verfügbaren Maschinen
+        reward += 0.05 * machine_utilization  # Skalierungsfaktor 0.05 bestimmt Einfluss dieses Teilrewards
+        
+        # 2. Belohne Operationen mit höherer Priorität
+        # Berechnung: Nimm die Priorität des Jobs (1-10) und normalisiere auf 0.1-1.0
+        # Höhere Priorität = höherer Reward, um wichtigere Jobs zu bevorzugen
+        # Die Priorität kommt direkt aus den Jobdaten und wurde bei _prepare_operations() übernommen
+        #reward += 0.1 * (op_data['priority'] / 10.0)  # Skalierungsfaktor 0.1 bestimmt Einfluss
+        
+        # 3. Strafe für lange Wartezeiten bei verfügbaren Maschinen
+        # Berechnung: Differenz zwischen tatsächlicher Startzeit und frühestmöglicher Startzeit
+        # start_time = Zeitpunkt, zu dem die Operation tatsächlich beginnt (inkl. Umrüstzeit)
+        # earliest_start = Frühester möglicher Start (basierend auf Vorgängeroperationen)
+        # current_time = Aktuelle Simulationszeit
+        # Wenn die Operation später als nötig startet, gibt es eine Strafe proportional zur Wartezeit
         idle_time = start_time - max(self.current_time, earliest_start)
         if idle_time > 0:
-            reward -= 0.1 * (idle_time / 50.0)  # Normalisiert durch typische Zeitkonstante
-
-        # 6. Bonus für Fertigstellung eines gesamten Jobs
-        # TODO - EINMAL BERÜCKSTIGEN, PRIORITÄT EINBAUEN.
-        # job_operations = self.job_operations[job_name]
-        # completed_ops_count = sum(1 for op_name in job_operations if self.operations[op_name]['status'] == 'completed')
-        # if completed_ops_count == len(job_operations):
-        #     reward += 0.3  # Bonus für Abschluss eines vollständigen Jobs
-
-        # 7. Belohne Balancierung der Arbeitslast zwischen Maschinen
-        # TODO: FOKUS AUF MAKESPAN. HIER TESTEN. OHNE UND MIT AUSBALANCIERUNG (VIELE EXPERIMENTE DURCHFÜREHN).
-        machine_loads = list(self.machine_times.values())
-        load_std_dev = np.std(machine_loads) if machine_loads else 0
-        max_std_dev = 500  # Typischer Maximalwert basierend auf Problemkontext
-        normalized_std_dev = min(load_std_dev / max_std_dev, 1.0)
-        reward += 0.15 * (1.0 - normalized_std_dev)  # Weniger Varianz = mehr Reward
+            reward -= 0.05 * (idle_time / 50.0)  # Division durch 50.0 normalisiert die Wartezeit
+        
+        # 4. Belohnung für wenige Umrüstungen (neu hinzugefügt)
+        # Berechnung: Vergleiche das aktuelle Material auf der Maschine mit dem benötigten Material
+        # Wenn kein Materialwechsel nötig ist, gibt es einen Bonus, da Umrüstzeiten eingespart werden
+        # self.machine_materials[machine] = Aktuelles Material auf der Maschine
+        # op_material = Von der Operation benötigtes Material
+        if self.machine_materials[machine] == op_material:
+            # Keine Materialumrüstung notwendig - gib Bonus
+            reward += 0.08  # Direkter Bonus für vermiedene Umrüstung
+        else:
+            # Materialwechsel notwendig - kleine Strafe
+            reward -= 0.03  # Kleine Strafe für notwendige Umrüstung
         
         # Fertig, wenn alle Jobs abgeschlossen sind
         done = len(self.completed_jobs) == len(self.jobs)
         
         if done:
             # Makespan (Gesamtfertigstellungszeit) berechnen
+            # Berechnung: Maximum aller Maschinenendzeiten = Zeitpunkt, zu dem alle Operationen fertig sind
             makespan = max([time for machine, time in self.machine_times.items()])
             
-            # Belohnung für niedriges Makespan (exponentiell stärker für kürzere Makespans)
-            # TODO: BASEMAKESPAN BERECHNEN. SINNVOLLER WERT?
-            base_makespan = 3000  # Typischer Ausgangswert basierend auf Ihrer Grafik
-            reward += 2000 * (base_makespan / makespan)  # Statt 1000 / makespan
+            # Abschlussbelohnung: Fester Bonus für das erfolgreiche Abschließen aller Jobs
+            # Dies hilft dem Agenten, vollständige Schedules zu bevorzugen
+            reward += 5.0
             
-            # # Zusätzlicher Bonus für schnellere Fertigstellung als Durchschnittszeit
-            # expected_makespan = sum(op_data['time'] for op_name, op_data in self.operations.items()) / len(self.machines)
-            # if makespan < expected_makespan:
-            #     reward += 500  # Signifikanter Bonus für effiziente Planung
-            # ANDERE STUFE EINBAUEN
-            # AM ENDE VERGELICH ZU HEURISITK
-
+            # Hier könnte später ein Vergleich mit Heuristiken eingebaut werden
         
         # Neuen Zustand erstellen
         self.state = self._create_state_graph()
@@ -1120,7 +1110,7 @@ def generate_synthetic_data(config=None):
     """Generiert synthetische Produktionsdaten"""
     if config is None:
         config = {
-            "n_jobs": 20,
+            "n_jobs": 50,
             "min_ops": 1,
             "max_ops": 5,
             "machines": ["M1", "M2", "M3", "M4"],
@@ -1213,7 +1203,7 @@ if __name__ == "__main__":
     
     # Konfiguration für die Datengenerierung
     config = {
-        "n_jobs": 50,
+        "n_jobs": 20,
         "min_ops": 1,
         "max_ops": 5,
         "machines": ["M1", "M2", "M3", "M4"],

@@ -104,7 +104,7 @@ def plot_comparison_results(results, save_path=None):
     
     # 1. Makespan-Vergleich (Boxplot)
     makespan_data = [results[method]['raw_makespans'] for method in results]
-    ax1.boxplot(makespan_data, tick_labels=results.keys())  # Updated parameter name
+    ax1.boxplot(makespan_data, labels=results.keys())  # Fixed parameter name from tick_labels to labels
     ax1.set_title('Makespan Distribution')
     ax1.set_ylabel('Time Units')
     ax1.grid(True, alpha=0.3)
@@ -422,7 +422,7 @@ def main():
     data_file = os.path.join(parent_dir, "production_data.json")
     
     # Use a specific model instead of finding the best one
-    specific_model = "best_model_makespan_5665.00.pt"
+    specific_model = "best_model_makespan_2079.00.pt"
     model_path = os.path.join(parent_dir, "model_checkpoints", specific_model)  # Removed duplicate '040425'
     
     print(f"Looking for data file at: {data_file}")

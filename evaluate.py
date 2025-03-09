@@ -5,8 +5,10 @@ import matplotlib.pyplot as plt
 import json
 from datetime import datetime
 
-from environments.job_env import JobSchedulingEnv
-from agents.ppo_agent import PPOAgent
+# Try importing from the correct location
+import sys
+sys.path.append('/Users/timoelkers/Desktop/Repository_Transformer/jsp/040425')
+from main import JobSchedulingEnvironment, PPOAgent
 
 def evaluate_agent(env, agent, n_episodes=10):
     """
@@ -32,7 +34,7 @@ def evaluate_agent(env, agent, n_episodes=10):
         while not done:
             # Aktion auswählen (ohne Exploration)
             with torch.no_grad():
-                action, _, _ = agent.choose_action(state)
+                action, _, _ = agent.act(state)  # act statt choose_action
             
             # Aktion ausführen
             next_state, reward, done, info = env.step(action)
@@ -44,7 +46,7 @@ def evaluate_agent(env, agent, n_episodes=10):
         # Episode abgeschlossen
         makespans.append(info.get('makespan', 0))
         rewards.append(episode_reward)
-        schedules.append(env.scheduled_operations)
+        schedules.append(env.schedule)  # schedule statt scheduled_operations
     
     # Ergebnisse
     results = {
@@ -78,15 +80,17 @@ def compare_strategies(env, agent=None, strategies=None):
         dict: Vergleichsergebnisse
     """
     if strategies is None:
-        strategies = ['FIFO', 'LIFO', 'SPT']
+        strategies = ['FIFO', 'LIFO', 'SPT', 'Priority', 'Random']
     
     results = {}
     
     # Baseline-Strategien evaluieren
     for strategy in strategies:
-        env_copy = env  # In einer realen Implementierung sollte hier eine Kopie erstellt werden
+        env_copy = JobSchedulingEnvironment(env.data_file, heuristic=strategy)
         env_copy.reset()
-        _, _, _, info = env_copy.step(strategy)
+        done = False
+        while not done:
+            _, _, done, info = env_copy.step()  # Verwende die Heuristik
         results[strategy] = info.get('makespan', 0)
     
     # Agenten evaluieren, falls vorhanden
@@ -116,21 +120,34 @@ def compare_strategies(env, agent=None, strategies=None):
     
     return results
 
-def visualize_schedule(schedule, title="Job-Scheduling-Plan"):
+def visualize_schedule(env, title="Job-Scheduling-Plan"):
     """
     Visualisiert einen Scheduling-Plan als Gantt-Diagramm
     
     Args:
-        schedule: Liste von geplanten Operationen
+        env: Die Umgebung mit dem Schedule
         title: Titel des Diagramms
     """
-    if not schedule:
+    # Flachen Schedule erstellen
+    flat_schedule = []
+    for machine, operations in env.schedule.items():
+        for op in operations:
+            flat_schedule.append({
+                'machine': machine,
+                'operation': op['operation'],
+                'job': op['job'],
+                'start': op['start'],
+                'end': op['end'],
+                'setup': op.get('setup', 0)
+            })
+    
+    if not flat_schedule:
         print("Kein Schedule zum Visualisieren vorhanden.")
         return
     
     # Daten für das Gantt-Diagramm vorbereiten
-    machines = sorted(list(set([op['machine'] for op in schedule])))
-    jobs = sorted(list(set([op['job'] for op in schedule])))
+    machines = sorted(list(set([op['machine'] for op in flat_schedule])))
+    jobs = sorted(list(set([op['job'] for op in flat_schedule])))
     
     # Farbzuordnung für Jobs
     colors = plt.cm.tab20(np.linspace(0, 1, len(jobs)))
@@ -175,3 +192,37 @@ def visualize_schedule(schedule, title="Job-Scheduling-Plan"):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     plt.savefig(os.path.join(plots_dir, f"schedule_{timestamp}.png"))
     plt.show()
+
+if __name__ == "__main__":
+    # Pfade definieren
+    model_path = "ppo_agent_model.pt"
+    data_file = "production_data.json"
+    
+    # Umgebung erstellen
+    env = JobSchedulingEnvironment(data_file)
+    
+    # Feature-Dimension bestimmen
+    state = env.reset()
+    state_dim = state['x'].shape[1]
+    action_dim = len(state['operation_queue'])
+    
+    # Agent erstellen und Modell laden
+    agent = PPOAgent(state_dim, action_dim, hidden_dim=128, num_heads=8)
+    agent.load(model_path)
+    print(f"Modell geladen von: {model_path}")
+    
+    # Agenten evaluieren
+    results = evaluate_agent(env, agent, n_episodes=10)
+    
+    # Strategien vergleichen
+    compare_results = compare_strategies(env, agent)
+    
+    # Besten Schedule visualisieren
+    best_env = JobSchedulingEnvironment(data_file)
+    best_env.reset()
+    done = False
+    while not done:
+        action, _, _ = agent.act(best_env.state)
+        _, _, done, _ = best_env.step(action)
+    
+    visualize_schedule(best_env, title="Optimierter Schedule mit PPO-Agent")

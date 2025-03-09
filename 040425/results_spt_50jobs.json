@@ -27,6 +27,6 @@
     "environment_info": {
         "num_jobs": 50,
         "num_machines": 4,
-        "data_file": "/Users/paulmill/Desktop/Georg August Universität/2025_PROJEKTSTUDIUM/jsp/040425/test_data_50jobs.json"
+        "data_file": "/Users/timoelkers/Desktop/Repository_Transformer/jsp/040425/test_data_50jobs.json"
     }
 }

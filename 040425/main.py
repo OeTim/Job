@@ -331,7 +331,7 @@ class JobSchedulingEnvironment:
         # Berechnung: Nimm die Priorität des Jobs (1-10) und normalisiere auf 0.1-1.0
         # Höhere Priorität = höherer Reward, um wichtigere Jobs zu bevorzugen
         # Die Priorität kommt direkt aus den Jobdaten und wurde bei _prepare_operations() übernommen
-        #reward += 0.1 * (op_data['priority'] / 10.0)  # Skalierungsfaktor 0.1 bestimmt Einfluss
+        reward += 0.1 * (op_data['priority'] / 10.0)  # Skalierungsfaktor 0.1 bestimmt Einfluss
         
         # 3. Strafe für lange Wartezeiten bei verfügbaren Maschinen
         # Berechnung: Differenz zwischen tatsächlicher Startzeit und frühestmöglicher Startzeit
@@ -1203,7 +1203,7 @@ if __name__ == "__main__":
     
     # Konfiguration für die Datengenerierung
     config = {
-        "n_jobs": 20,
+        "n_jobs": 50,
         "min_ops": 1,
         "max_ops": 5,
         "machines": ["M1", "M2", "M3", "M4"],
